@@ -1,0 +1,89 @@
+﻿@model IEnumerable<LEIUTAD.Models.Leitor>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Nome)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PasswordHash)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PasswordSalt)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Email)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Tele_n)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Data_n)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Endereco)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Endereco_n)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Localidade)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Pais)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Nome)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PasswordHash)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PasswordSalt)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Email)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Tele_n)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Data_n)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Endereco)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Endereco_n)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Localidade)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Pais)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.ID_user">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.ID_user">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.ID_user">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
