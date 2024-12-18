@@ -21,5 +21,28 @@ namespace LEIUTAD.Data
         public DbSet<LEIUTAD.Models.Administradores> Administrador { get; set; } = default!;
         public DbSet<LEIUTAD.Models.Bibliotecarios> Bibliotecarios { get; set; } = default!;
 
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            // Relação Livros -> Autores (Muitos para Um)
+            modelBuilder.Entity<Livros>()
+                .HasOne(l => l.Autor)
+                .WithMany()
+                .HasForeignKey(l => l.ID_Autor)
+                .OnDelete(DeleteBehavior.Cascade); // Apagar livros se o autor for apagado
+
+            // Relação Livros -> Generos (Muitos para Um)
+            modelBuilder.Entity<Livros>()
+                .HasOne(l => l.Genero)
+                .WithMany()
+                .HasForeignKey(l => l.ID_Genero)
+                .OnDelete(DeleteBehavior.Restrict); // Não apagar géneros quando livros são apagados
+
+            // Configuração adicional (se necessário):
+            modelBuilder.Entity<Leitor>()
+                .HasKey(leitor => leitor.ID_user);
+
+            // Adicione outras configurações de relações aqui, se necessário.
+        }
+
     }
 }
