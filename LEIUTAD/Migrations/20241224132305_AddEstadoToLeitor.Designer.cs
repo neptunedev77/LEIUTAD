@@ -4,6 +4,7 @@ using LEIUTAD.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LEIUTAD.Migrations
 {
     [DbContext(typeof(LEIUTADContext))]
-    partial class LEIUTADContextModelSnapshot : ModelSnapshot
+    [Migration("20241224132305_AddEstadoToLeitor")]
+    partial class AddEstadoToLeitor
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -203,21 +206,12 @@ namespace LEIUTAD.Migrations
                     b.Property<int>("ID_Genero")
                         .HasColumnType("int");
 
-                    b.Property<string>("Imagem")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
                     b.Property<string>("N_Exemplares")
                         .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<float>("Preco")
                         .HasColumnType("float");
-
-                    b.Property<string>("Sinopse")
-                        .IsRequired()
-                        .HasMaxLength(1000)
-                        .HasColumnType("varchar(1000)");
 
                     b.Property<string>("Titulo")
                         .IsRequired()

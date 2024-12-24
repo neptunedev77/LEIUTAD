@@ -9,6 +9,18 @@ builder.Services.AddDbContext<LEIUTADContext>(options =>
 
 builder.Services.AddControllersWithViews();
 
+// Adicionar suporte a sessões
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
+
+
+builder.Services.AddHttpContextAccessor();
+
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
@@ -34,10 +46,14 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
+app.UseStaticFiles();
+
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
+
+app.UseSession(); // Ativar sessões
 
 app.UseAuthorization();
 

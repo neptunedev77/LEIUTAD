@@ -19,5 +19,9 @@ namespace LEIUTAD.Models
         public float Preco { get; set; }
         [Required(ErrorMessage = "É obrigatório colocar o número de exemplares.")]
         public string N_Exemplares { get; set; }
+
+        [StringLength(1000, ErrorMessage = "A sinopse pode ter no máximo 1000 caracteres.")]
+        public string Sinopse { get; set; }
+        public string Imagem { get; set; }
     }
 }

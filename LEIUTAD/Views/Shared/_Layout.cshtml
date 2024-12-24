@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -8,29 +9,46 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/LEIUTAD.styles.css" asp-append-version="true" />
 </head>
-<body>
+<body style="background-color: #fcf6eb;">
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">LEIUTAD</a>
+                <a class="navbar-brand" asp-area="" asp-controller="Livros" asp-action="Index">
+                    <img src="~/images/logo.png" alt="LEIUTAD" style="height: 40px;" />
+                </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
-                        <!-- Caso precise de links adicionais -->
+                        <!-- Links adicionais, se necessários -->
                     </ul>
-                    <!-- Botões Login e Registo -->
+                    <!-- Navbar dinâmica -->
                     <div class="d-flex ms-auto">
-                        <a asp-area="" asp-controller="Account" asp-action="Login" class="btn btn-primary me-2">Login</a>
-                        <a asp-area="" asp-controller="Account" asp-action="Register" class="btn btn-secondary">Registo</a>
+                        @if (HttpContextAccessor.HttpContext.Session.GetString("UserName") != null)
+                        {
+                            <!-- Utilizador autenticado -->
+                            <form asp-area="" asp-controller="Pesquisa" asp-action="Index" method="get" class="d-flex me-3">
+                                <input class="form-control me-2" type="search" name="query" placeholder="Pesquisar livros..." aria-label="Pesquisar">
+                                <button class="btn btn-outline-success" type="submit">Pesquisar</button>
+                            </form>
+                            <span class="navbar-text me-3">Bem-vindo, @HttpContextAccessor.HttpContext.Session.GetString("UserName")</span>
+                            <form asp-area="" asp-controller="Account" asp-action="Logout" method="post" class="d-inline">
+                                <button type="submit" class="btn btn-outline-danger">Logout</button>
+                            </form>
+                        }
+                        else
+                        {
+                            <!-- Utilizador não autenticado -->
+                            <a asp-area="" asp-controller="Account" asp-action="Login" class="btn btn-primary me-2" style="background-color: #7d2f22; border-color: #7d2f22;">Login</a>
+                            <a asp-area="" asp-controller="Account" asp-action="Register" class="btn btn-secondary">Registo</a>
+                        }
                     </div>
                 </div>
             </div>
         </nav>
     </header>
-
 
     <div class="container">
         <main role="main" class="pb-3">
@@ -40,7 +58,7 @@
 
     <footer class="border-top footer text-muted">
         <div class="container">
-            &copy; 2024 - LEIUTAD - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            &copy; 2024 - LEIUTAD $ Todos os direitos reservados.
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
