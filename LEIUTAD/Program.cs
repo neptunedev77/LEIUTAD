@@ -19,6 +19,8 @@ builder.Services.AddSession(options =>
 });
 
 
+
+
 builder.Services.AddHttpContextAccessor();
 
 var app = builder.Build();
@@ -60,5 +62,6 @@ app.UseAuthorization();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Livros}/{action=Index}/{id?}");
+
 
 app.Run();
