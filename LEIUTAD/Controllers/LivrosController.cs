@@ -27,5 +27,26 @@ namespace LEIUTAD.Controllers
 
             return View(livrosPorGenero);
         }
+
+        //Para passar para a página dos detalhes do livro
+        [HttpGet]
+        public IActionResult Detalhes(int id)
+        {
+            // Busca o livro pelo ID
+            var livro = _context.Livro
+                .Include(l => l.Autor)
+                .Include(l => l.Genero)
+                .FirstOrDefault(l => l.ISBM == id);
+
+            // Verifica se o livro existe
+            if (livro == null)
+            {
+                return NotFound(); // Retorna erro 404 se o livro não existir
+            }
+
+            // Passa o livro para a view
+            return View(livro);
+        }
+
     }
 }

@@ -110,7 +110,7 @@
         @if (!Model.Any())
         {
             <div class="no-books-message">
-                Nenhum livro encontrado.<br>
+                @ViewData["Mensagem"]<br>
                 Tente pesquisar outro título.
             </div>
         }
