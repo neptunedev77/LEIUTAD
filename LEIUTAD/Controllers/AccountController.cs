@@ -69,42 +69,69 @@ namespace LEIUTAD.Controllers
         {
             if (ModelState.IsValid)
             {
+                // Verificar na tabela Leitor
                 var user = _context.Leitor.SingleOrDefault(u => u.Email == model.Email);
-
-                // Verificar se o utilizador existe
-                if (user == null)
+                if (user != null)
                 {
-                    ModelState.AddModelError("", "Utilizador ou password inválidos.");
-                    return View(model);
-                }
-
-                // Verificar password
-                using (var hmac = new HMACSHA512(user.PasswordSalt))
-                {
-                    var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(model.Password));
-                    if (!computedHash.SequenceEqual(user.PasswordHash))
+                    // Verificar password
+                    using (var hmac = new HMACSHA512(user.PasswordSalt))
                     {
-                        ModelState.AddModelError("", "Utilizador ou password inválidos.");
+                        var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(model.Password));
+                        if (!computedHash.SequenceEqual(user.PasswordHash))
+                        {
+                            ModelState.AddModelError("", "Utilizador ou password inválidos.");
+                            return View(model);
+                        }
+                    }
+
+                    // Verificar o estado (email verificado)
+                    if (!user.Estado)
+                    {
+                        ModelState.AddModelError("", "A conta ainda não foi verificada.");
                         return View(model);
                     }
+
+                    // Guardar informações de sessão
+                    HttpContext.Session.SetString("UserName", user.Nome);
+                    HttpContext.Session.SetInt32("UserId", user.ID_user);
+                    HttpContext.Session.SetString("UserRole", "Leitor");
+
+                    return RedirectToAction("Index", "Livros");
                 }
 
-                // Verificar o estado (email verificado)
-                if (!user.Estado)
+                // Verificar na tabela Bibliotecarios
+                var bibliotecario = _context.Bibliotecarios.SingleOrDefault(b => b.Email == model.Email);
+                if (bibliotecario != null)
                 {
-                    ModelState.AddModelError("", "A conta ainda não foi verificada.");
-                    return View(model);
+                    // Verificar password
+                    using (var hmac = new HMACSHA512(bibliotecario.PasswordSalt))
+                    {
+                        var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(model.Password));
+                        if (!computedHash.SequenceEqual(bibliotecario.PasswordHash))
+                        {
+                            ModelState.AddModelError("", "Utilizador ou password inválidos.");
+                            return View(model);
+                        }
+                    }
+
+                    // Guardar informações de sessão
+                    HttpContext.Session.SetString("UserName", bibliotecario.Nome);
+                    HttpContext.Session.SetInt32("UserId", bibliotecario.ID_Bib);
+                    HttpContext.Session.SetString("UserRole", "Bibliotecario");
+
+                    return RedirectToAction("Index", "Bibliotecario");
+
                 }
 
-                // Guardar informações de sessão
-                HttpContext.Session.SetString("UserName", user.Nome);
-                HttpContext.Session.SetInt32("UserId", user.ID_user);
-
-                return RedirectToAction("Index", "Livros");
+                // Se não encontrar em nenhuma tabela
+                ModelState.AddModelError("", "Utilizador ou password inválidos.");
+                return View(model);
             }
 
             return View(model);
         }
+
+
 
         // Logout
         [HttpPost]

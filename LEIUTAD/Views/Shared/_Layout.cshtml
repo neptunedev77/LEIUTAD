@@ -8,13 +8,50 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/LEIUTAD.styles.css" asp-append-version="true" />
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .navbar {
+            background-color: #f8f9fa;
+        }
+
+        .navbar-brand img {
+            height: 40px;
+        }
+
+        .btn-outline-success {
+            border-color: #28a745;
+            color: #28a745;
+        }
+
+            .btn-outline-success:hover {
+                background-color: #28a745;
+                color: #fff;
+            }
+
+        main {
+            flex: 1;
+            padding-bottom: 30px; /* Separar footer */
+        }
+
+        .footer {
+            background-color: #f8f9fa;
+            text-align: center;
+            border-top: 10px  #ddd;
+        }
+    </style>
 </head>
 <body style="background-color: #fcf6eb;">
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light border-bottom box-shadow mb-3">
             <div class="container-fluid">
                 <a class="navbar-brand" asp-area="" asp-controller="Livros" asp-action="Index">
-                    <img src="~/images/logo.png" alt="LEIUTAD" style="height: 40px;" />
+                    <img src="~/images/logo.png" alt="LEIUTAD" />
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
@@ -22,17 +59,22 @@
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
-                        <!-- Links adicionais, se necessários -->
+                        @if (HttpContextAccessor.HttpContext.Session.GetString("Role") == "Bibliotecario")
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="" asp-controller="Bibliotecario" asp-action="Index">Painel do Bibliotecário</a>
+                            </li>
+                        }
                     </ul>
-                    <!-- Navbar dinâmica -->
                     <div class="d-flex ms-auto">
                         @if (HttpContextAccessor.HttpContext.Session.GetString("UserName") != null)
                         {
                             <!-- Utilizador autenticado -->
-                            <form asp-area="" asp-controller="Pesquisa" asp-action="Index" method="get" class="d-flex me-3">
-                                <input class="form-control me-2" type="search" name="query" placeholder="Pesquisar livros..." aria-label="Pesquisar">
-                                <button class="btn btn-outline-success" type="submit">Pesquisar</button>
-                            </form>
+                                <form asp-area="" asp-controller="Pesquisa" asp-action="Index" method="get" class="d-flex me-3">
+                                    <input class="form-control me-2" type="search" name="query" placeholder="Pesquisar livros..." aria-label="Pesquisar">
+                                    <button class="btn btn-outline-success" type="submit">Pesquisar</button>
+                                </form>
+
                             <span class="navbar-text me-3">Bem-vindo, @HttpContextAccessor.HttpContext.Session.GetString("UserName")</span>
                             <form asp-area="" asp-controller="Account" asp-action="Logout" method="post" class="d-inline">
                                 <button type="submit" class="btn btn-outline-danger">Logout</button>
@@ -50,15 +92,13 @@
         </nav>
     </header>
 
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
+    <main class="container">
+        @RenderBody()
+    </main>
 
-    <footer class="border-top footer text-muted">
+    <footer class="footer text-center @(HttpContextAccessor.HttpContext.Session.GetString("UserRole") == "Bibliotecario" ? "text-white bg-dark" : "text-muted")">
         <div class="container">
-            &copy; 2024 - LEIUTAD $ Todos os direitos reservados.
+            &copy; 2024 - LEIUTAD &bull; Todos os direitos reservados.
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
