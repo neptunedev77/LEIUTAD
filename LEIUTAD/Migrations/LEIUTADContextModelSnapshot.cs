@@ -49,7 +49,7 @@ namespace LEIUTAD.Migrations
 
                     b.HasKey("ID_Admin");
 
-                    b.ToTable("Administrador");
+                    b.ToTable("Administrador", (string)null);
                 });
 
             modelBuilder.Entity("LEIUTAD.Models.Autores", b =>
@@ -78,7 +78,7 @@ namespace LEIUTAD.Migrations
 
                     b.HasKey("ID_Autor");
 
-                    b.ToTable("Autor");
+                    b.ToTable("Autor", (string)null);
                 });
 
             modelBuilder.Entity("LEIUTAD.Models.Bibliotecarios", b =>
@@ -112,7 +112,7 @@ namespace LEIUTAD.Migrations
 
                     b.HasKey("ID_Bib");
 
-                    b.ToTable("Bibliotecarios");
+                    b.ToTable("Bibliotecarios", (string)null);
                 });
 
             modelBuilder.Entity("LEIUTAD.Models.Generos", b =>
@@ -130,7 +130,7 @@ namespace LEIUTAD.Migrations
 
                     b.HasKey("ID_Genero");
 
-                    b.ToTable("Genero");
+                    b.ToTable("Genero", (string)null);
                 });
 
             modelBuilder.Entity("LEIUTAD.Models.Leitor", b =>
@@ -186,7 +186,7 @@ namespace LEIUTAD.Migrations
 
                     b.HasKey("ID_user");
 
-                    b.ToTable("Leitor");
+                    b.ToTable("Leitor", (string)null);
                 });
 
             modelBuilder.Entity("LEIUTAD.Models.Livros", b =>
@@ -230,7 +230,7 @@ namespace LEIUTAD.Migrations
 
                     b.HasIndex("ID_Genero");
 
-                    b.ToTable("Livro");
+                    b.ToTable("Livro", (string)null);
                 });
 
             modelBuilder.Entity("LEIUTAD.Models.Livros", b =>

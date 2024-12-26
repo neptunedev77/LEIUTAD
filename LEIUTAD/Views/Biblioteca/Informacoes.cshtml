@@ -1,8 +1,4 @@
-﻿@{
-    ViewData["Title"] = "Informações da Biblioteca";
-}
-
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="pt">
 <head>
     <meta charset="UTF-8">
@@ -33,8 +29,10 @@
         }
 
             .info-header img {
-                max-width: 45%;
+                max-width: 500px;
+                max-height: 300px;
                 border-radius: 10px;
+                object-fit: cover;
             }
 
             .info-header .description {
@@ -85,9 +83,11 @@
                 }
 
             .info-card img {
-                max-width: 100%;
+                max-width: 300px;
+                max-height: 200px;
                 border-radius: 10px;
                 margin-bottom: 15px;
+                object-fit: cover;
             }
 
         footer {
@@ -103,7 +103,7 @@
     <div class="info-container">
         <!-- Header com imagem e introdução -->
         <div class="info-header">
-            <img src="https://via.placeholder.com/500x300" alt="Imagem da Biblioteca">
+            <img src="~/images/biblio.jpg" alt="Imagem da Biblioteca">
             <div class="description">
                 <h1>Bem-vindo à Biblioteca LEI-UTAD</h1>
                 <p>A Biblioteca <strong>LEI-UTAD</strong> é um espaço dedicado ao empréstimo de livros, com uma vasta coleção que abrange diversos géneros e interesses. Oferecemos uma experiência acessível e organizada para todos os nossos visitantes.</p>
@@ -129,7 +129,7 @@
             <!-- Localização -->
             <div class="info-card">
                 <h2>Onde Estamos?</h2>
-                <img src="https://via.placeholder.com/300x200" alt="Mapa">
+                <img src="~/images/mapa.png" alt="Mapa">
                 <p>Rua das Flores, 123</p>
                 <p>5000-801 Vila Real</p>
                 <p>Portugal</p>

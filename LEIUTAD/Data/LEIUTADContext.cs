@@ -38,8 +38,8 @@ namespace LEIUTAD.Data
                 .OnDelete(DeleteBehavior.Restrict); // Não apagar géneros quando livros são apagados
 
             // Configuração adicional (se necessário):
-            modelBuilder.Entity<Leitor>()
-                .HasKey(leitor => leitor.ID_user);
+            modelBuilder.Entity<Livros>()
+                .HasKey(l => l.ISBN);
 
             // Adicione outras configurações de relações aqui, se necessário.
         }

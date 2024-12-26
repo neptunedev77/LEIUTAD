@@ -5,8 +5,9 @@ namespace LEIUTAD.Models
 {
     public class Livros
     {
-        [Key]
-        public int ISBM { get; set; }
+        [Key] // Define o ISBN como chave primária
+        [StringLength(13, ErrorMessage = "O ISBN deve ter no máximo 13 caracteres.")]
+        public string ISBN { get; set; }
         [Required(ErrorMessage = "É obrigatório colocar um título.")]
         [StringLength(150, ErrorMessage = "O título deve conter no máximo 150 caracteres.")]
         public string Titulo { get; set; }

@@ -8,9 +8,12 @@ namespace LEIUTAD.Controllers
     public class LivrosController : Controller
     {
         private readonly LEIUTADContext _context;
-        public LivrosController(LEIUTADContext context) {
+
+        public LivrosController(LEIUTADContext context)
+        {
             _context = context;
         }
+
         public IActionResult Index()
         {
             // Carregar os livros organizados por género
@@ -28,15 +31,15 @@ namespace LEIUTAD.Controllers
             return View(livrosPorGenero);
         }
 
-        //Para passar para a página dos detalhes do livro
+        // Para passar para a página dos detalhes do livro
         [HttpGet]
-        public IActionResult Detalhes(int id, string nome)
+        public IActionResult Detalhes(string id, string nome)
         {
-            // Busca o livro pelo ID
+            // Busca o livro pelo ISBN
             var livro = _context.Livro
                 .Include(l => l.Autor)
                 .Include(l => l.Genero)
-                .FirstOrDefault(l => l.ISBM == id);
+                .FirstOrDefault(l => l.ISBN == id);
 
             // Verifica se o livro existe
             if (livro == null)
