@@ -5,7 +5,7 @@ using LEIUTAD.Filters;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Configuração do banco de dados
+// Configuração do base de dados
 builder.Services.AddDbContext<LEIUTADContext>(options =>
     options.UseMySql(
         builder.Configuration.GetConnectionString("DefaultConnection"),

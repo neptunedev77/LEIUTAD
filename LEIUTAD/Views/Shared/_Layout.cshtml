@@ -80,7 +80,8 @@
                         @if (HttpContextAccessor.HttpContext.Session.GetString("UserName") != null)
                         {
                             <!-- Utilizador autenticado -->
-                            @if (HttpContextAccessor.HttpContext.Session.GetString("UserRole") == "Leitor")
+                            @if (HttpContextAccessor.HttpContext.Session.GetString("UserRole") == "Leitor" ||
+                           HttpContextAccessor.HttpContext.Session.GetString("UserRole") == "Bibliotecario")
                             {
                                 <form asp-area="" asp-controller="Pesquisa" asp-action="Index" method="get" class="d-flex me-3">
                                     <input class="form-control me-2" type="search" name="query" placeholder="Pesquisar livros..." aria-label="Pesquisar">

@@ -148,7 +148,9 @@
                                         {
                                             var livro = genero.Livros[j];
                                             <div class="book-card">
+                                                <a href="@Url.Action("Detalhes", "Livros", new { id = livro.ISBN, titulo = GenerateSlug(livro.Titulo) })" style="text-decoration: none; color: inherit;">
                                                 <img src="~/images/livros/@livro.Imagem" alt="@livro.Titulo" />
+                                                </a>
                                                 <div class="book-title">
                                                     <a href="@Url.Action("Detalhes", "Livros", new { id = livro.ISBN, titulo = GenerateSlug(livro.Titulo) })" style="text-decoration: none; color: inherit;">
                                                         @livro.Titulo
