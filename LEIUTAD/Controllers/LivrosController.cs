@@ -30,7 +30,7 @@ namespace LEIUTAD.Controllers
 
         //Para passar para a página dos detalhes do livro
         [HttpGet]
-        public IActionResult Detalhes(int id)
+        public IActionResult Detalhes(int id, string nome)
         {
             // Busca o livro pelo ID
             var livro = _context.Livro
@@ -47,6 +47,5 @@ namespace LEIUTAD.Controllers
             // Passa o livro para a view
             return View(livro);
         }
-
     }
 }

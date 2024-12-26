@@ -131,6 +131,10 @@ namespace LEIUTAD.Controllers
             return View(model);
         }
 
+        public IActionResult AccessDenied()
+        {
+            return View();
+        }
 
 
         // Logout

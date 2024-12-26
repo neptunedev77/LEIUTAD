@@ -42,7 +42,7 @@
         .footer {
             background-color: #f8f9fa;
             text-align: center;
-            border-top: 10px  #ddd;
+            border-top: 10px #ddd;
         }
     </style>
 </head>
@@ -59,22 +59,34 @@
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
-                        @if (HttpContextAccessor.HttpContext.Session.GetString("Role") == "Bibliotecario")
+                        @if (HttpContextAccessor.HttpContext.Session.GetString("UserRole") == "Bibliotecario")
                         {
-                            <li class="nav-item">
-                                <a class="nav-link" asp-area="" asp-controller="Bibliotecario" asp-action="Index">Painel do Bibliotecário</a>
-                            </li>
+                            <!-- Alternar entre "Página Inicial" e "Painel do Bibliotecário" -->
+                            @if (ViewData["Title"] == "Página Inicial")
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-area="" asp-controller="Bibliotecario" asp-action="Index">Painel do Bibliotecário</a>
+                                </li>
+                            }
+                            else if (ViewData["Title"] == "Painel do Bibliotecário")
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-area="" asp-controller="Livros" asp-action="Index">Página Inicial</a>
+                                </li>
+                            }
                         }
                     </ul>
                     <div class="d-flex ms-auto">
                         @if (HttpContextAccessor.HttpContext.Session.GetString("UserName") != null)
                         {
                             <!-- Utilizador autenticado -->
+                            @if (HttpContextAccessor.HttpContext.Session.GetString("UserRole") == "Leitor")
+                            {
                                 <form asp-area="" asp-controller="Pesquisa" asp-action="Index" method="get" class="d-flex me-3">
                                     <input class="form-control me-2" type="search" name="query" placeholder="Pesquisar livros..." aria-label="Pesquisar">
                                     <button class="btn btn-outline-success" type="submit">Pesquisar</button>
                                 </form>
-
+                            }
                             <span class="navbar-text me-3">Bem-vindo, @HttpContextAccessor.HttpContext.Session.GetString("UserName")</span>
                             <form asp-area="" asp-controller="Account" asp-action="Logout" method="post" class="d-inline">
                                 <button type="submit" class="btn btn-outline-danger">Logout</button>

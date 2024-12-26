@@ -1,12 +1,17 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using LEIUTAD.Data;
+using LEIUTAD.Filters;
+
 var builder = WebApplication.CreateBuilder(args);
+
+// Configuração do banco de dados
 builder.Services.AddDbContext<LEIUTADContext>(options =>
     options.UseMySql(
         builder.Configuration.GetConnectionString("DefaultConnection"),
         ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("DefaultConnection"))));
 
+// Configuração dos controladores com filtros
 builder.Services.AddControllersWithViews();
 
 // Adicionar suporte a sessões
@@ -18,13 +23,12 @@ builder.Services.AddSession(options =>
     options.Cookie.IsEssential = true;
 });
 
-
-
-
+// Injeção de dependência para acesso ao HttpContext
 builder.Services.AddHttpContextAccessor();
 
 var app = builder.Build();
 
+// Inicialização da base de dados
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
@@ -40,15 +44,12 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
-// Configure the HTTP request pipeline.
+// Configure o pipeline HTTP
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
-
-app.UseStaticFiles();
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
@@ -57,11 +58,12 @@ app.UseRouting();
 
 app.UseSession(); // Ativar sessões
 
+// Autorização
 app.UseAuthorization();
 
+// Roteamento
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Livros}/{action=Index}/{id?}");
-
 
 app.Run();

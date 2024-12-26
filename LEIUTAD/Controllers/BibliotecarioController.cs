@@ -1,10 +1,12 @@
 ﻿using LEIUTAD.Data;
 using LEIUTAD.Models;
+using LEIUTAD.Filters; // Certifique-se de que este namespace está correto para o filtro
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
 
 namespace LEIUTAD.Controllers
 {
+    [BibliotecarioAuthorize] // Aplica o filtro a todo o controlador
     public class BibliotecarioController : Controller
     {
         private readonly LEIUTADContext _context;
@@ -21,12 +23,12 @@ namespace LEIUTAD.Controllers
             return View();
         }
 
-            [HttpGet]
-            public IActionResult GerirLivros()
-            {
+        [HttpGet]
+        public IActionResult GerirLivros()
+        {
             ViewData["ActiveTab"] = "GerirLivros";
 
-            var livros = _context.Livro.ToList(); // Obtem os livros
+            var livros = _context.Livro.ToList(); // Obtém os livros
             return View(livros);
         }
     }

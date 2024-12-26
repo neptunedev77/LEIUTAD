@@ -3,6 +3,39 @@
 @{
     ViewData["Title"] = "Página Inicial";
 }
+@functions {
+    public string GenerateSlug(string input)
+    {
+        // Remove acentos e caracteres especiais
+        string normalized = input
+            .Normalize(System.Text.NormalizationForm.FormD) // Normaliza o texto
+            .Where(c => System.Globalization.CharUnicodeInfo.GetUnicodeCategory(c) != System.Globalization.UnicodeCategory.NonSpacingMark)
+            .Aggregate("", (current, c) => current + c);
+
+        // Substituir espaços por traços e converter para minúsculas
+        return normalized
+            .ToLower()
+            .Replace(" ", "-") // Substituir espaços
+            .Replace("ç", "c")
+            .Replace("ã", "a")
+            .Replace("á", "a")
+            .Replace("é", "e")
+            .Replace("í", "i")
+            .Replace("ó", "o")
+            .Replace("ú", "u")
+            .Replace("ê", "e")
+            .Replace("ô", "o")
+            .Replace("ü", "u")
+            .Replace("&", "e")
+            .Replace("'", "")
+            .Replace(".", "")
+            .Replace(",", "")
+            .Replace("/", "-")
+            .Replace("(", "")
+            .Replace(")", "")
+            .Trim('-'); // Remove traços extras no início ou fim
+    }
+}
 
 <!DOCTYPE html>
 <html lang="pt">
@@ -117,9 +150,10 @@
                                             <div class="book-card">
                                                 <img src="~/images/livros/@livro.Imagem" alt="@livro.Titulo" />
                                                 <div class="book-title">
-                                                    <a href="@Url.Action("Detalhes", "Livros", new { id = livro.ISBM })" style="text-decoration: none; color: inherit;">
+                                                    <a href="@Url.Action("Detalhes", "Livros", new { id = livro.ISBM, titulo = GenerateSlug(livro.Titulo) })" style="text-decoration: none; color: inherit;">
                                                         @livro.Titulo
                                                     </a>
+
                                                 </div>
                                                 <div class="book-author"><b>Autor:</b> @livro.Autor.Autor_Nome</div>
                                                 <div class="book-price"><b>Preço:</b> @livro.Preco.ToString("F2") €</div>
