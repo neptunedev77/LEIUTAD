@@ -16,6 +16,7 @@ namespace LEIUTAD.Controllers
 
         public IActionResult Index()
         {
+            ViewBag.CurrentUrl = Request.Path + Request.QueryString;
             // Carregar os livros organizados por género
             var livrosPorGenero = _context.Genero
                 .Select(g => new LivrosPorGeneroViewModel
@@ -33,7 +34,7 @@ namespace LEIUTAD.Controllers
 
         // Para passar para a página dos detalhes do livro
         [HttpGet]
-        public IActionResult Detalhes(string id, string nome)
+        public IActionResult Detalhes(string id, string nome, string returnUrl)
         {
             // Busca o livro pelo ISBN
             var livro = _context.Livro
@@ -47,6 +48,7 @@ namespace LEIUTAD.Controllers
                 return NotFound(); // Retorna erro 404 se o livro não existir
             }
 
+            ViewBag.ReturnUrl = returnUrl;
             // Passa o livro para a view
             return View(livro);
         }

@@ -140,7 +140,7 @@
 
         <!-- Botões -->
         <div class="details-buttons footer-space">
-            <a href="@Url.Action("Index", "Livros")" class="btn btn-back">
+            <a href="@(!string.IsNullOrEmpty(ViewBag.ReturnUrl) ? ViewBag.ReturnUrl : Url.Action("Index", "Livros"))" class="btn btn-back">
                 <i class="fas fa-arrow-left"></i> Voltar
             </a>
             <button class="btn btn-request">

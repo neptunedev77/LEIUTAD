@@ -113,6 +113,19 @@
     <!-- Content -->
     <div class="content">
         <h1 class="mb-4">Gerir Livros</h1>
+        <!-- Exibição de mensagens de sucesso/erro -->
+        @if (TempData["MensagemSucesso"] != null)
+        {
+            <div id="alertaSucesso" class="alert alert-success">
+                @TempData["MensagemSucesso"]
+            </div>
+        }
+        @if (TempData["MensagemErro"] != null)
+        {
+            <div id="alertaErro" class="alert alert-danger">
+                @TempData["MensagemErro"]
+            </div>
+        }
 
         <!-- Ferramentas -->
         <div class="tools">
@@ -159,9 +172,12 @@
                             <button class="btn-action" title="Visualizar">
                                 <i class="fas fa-eye"></i>
                             </button>
-                            <button class="btn-action" title="Remover">
-                                <i class="fas fa-trash-alt"></i>
-                            </button>
+                            <form asp-action="EliminarLivro" asp-controller="Bibliotecario" method="post" style="display:inline;">
+                                <input type="hidden" name="isbn" value="@livro.ISBN" />
+                                <button type="submit" class="btn-action text-danger" title="Remover" onclick="return confirm('Tem a certeza que quer eliminar este livro?')">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </form>
                         </td>
                     </tr>
                 }
@@ -192,6 +208,28 @@
                 rows[i].style.display = match ? '' : 'none';
             }
         }
+    </script>
+    <!-- Script para esconder os alertas automaticamente após 2 segundos -->
+    <script>
+        
+        setTimeout(() => {
+            const alertaSucesso = document.getElementById("alertaSucesso");
+            const alertaErro = document.getElementById("alertaErro");
+
+            if (alertaSucesso) {
+                alertaSucesso.style.transition = "opacity 0.5s ease-out";
+                alertaSucesso.style.opacity = "0";
+
+                setTimeout(() => alertaSucesso.remove(), 500); // Remove do DOM após a transição
+            }
+
+            if (alertaErro) {
+                alertaErro.style.transition = "opacity 0.5s ease-out";
+                alertaErro.style.opacity = "0";
+
+                setTimeout(() => alertaErro.remove(), 500);
+            }
+        }, 2000); // Espera 2 segundos antes de ocultar
     </script>
 </body>
 </html>

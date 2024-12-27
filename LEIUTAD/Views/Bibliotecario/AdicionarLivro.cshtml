@@ -1,0 +1,91 @@
+﻿@model LEIUTAD.Models.Livros
+
+@{
+    ViewData["Title"] = "Adicionar Livro";
+}
+
+<div class="container mt-5">
+    <h1 class="text-center mb-4">Adicionar Livro</h1>
+
+    <form asp-action="AdicionarLivro" method="post" enctype="multipart/form-data">
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label asp-for="ISBN" class="form-label">ISBN</label>
+                <input asp-for="ISBN" class="form-control" />
+                <span asp-validation-for="ISBN" class="text-danger"></span>
+            </div>
+            <div class="col-md-6">
+                <label asp-for="Titulo" class="form-label">Título</label>
+                <input asp-for="Titulo" class="form-control" />
+                <span asp-validation-for="Titulo" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="ID_Autor">Autor:</label>
+            <select class="form-control" id="ID_Autor" name="ID_Autor">
+                <option value="">Selecione um autor</option>
+                @if (ViewBag.Autores != null)
+                {
+                    foreach (var autor in ViewBag.Autores)
+                    {
+                        <option value="@autor.Value">@autor.Text</option>
+                    }
+                }
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="ID_Genero">Género:</label>
+            <select class="form-control" id="ID_Genero" name="ID_Genero">
+                <option value="">Selecione um género</option>
+                @if (ViewBag.Generos != null)
+                {
+                    foreach (var genero in ViewBag.Generos)
+                    {
+                        <option value="@genero.Value">@genero.Text</option>
+                    }
+                }
+            </select>
+        </div>
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label asp-for="Preco" class="form-label">Preço</label>
+                <input asp-for="Preco" type="number" step="0.01" class="form-control" />
+                <span asp-validation-for="Preco" class="text-danger"></span>
+            </div>
+            <div class="col-md-6">
+                <label asp-for="N_Exemplares" class="form-label">Número de Exemplares</label>
+                <input asp-for="N_Exemplares" class="form-control" />
+                <span asp-validation-for="N_Exemplares" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Sinopse" class="form-label">Sinopse</label>
+            <textarea asp-for="Sinopse" class="form-control"></textarea>
+            <span asp-validation-for="Sinopse" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label for="Imagem" class="form-label">Imagem da Capa</label>
+            <input type="file" class="form-control" id="Imagem" name="Imagem" accept="image/*" />
+            <span asp-validation-for="Imagem" class="text-danger"></span>
+        </div>
+
+
+        <div class="text-center">
+            <button type="submit" class="btn btn-success">
+                <i class="fas fa-check"></i> Adicionar Livro
+            </button>
+            <a asp-action="GerirLivros" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Cancelar
+            </a>
+        </div>
+        <div style="margin-bottom: 50px;"></div>
+    </form>
+</div>
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.13/jquery.validate.unobtrusive.min.js"></script>
+}

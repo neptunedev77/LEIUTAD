@@ -1,5 +1,8 @@
 ﻿@model List<LEIUTAD.Models.Livros>
 
+<!-- Usar helper para o slug -->
+@using LEIUTAD.Helpers
+
 @{
     ViewData["Title"] = "Resultados da Pesquisa";
 }
@@ -120,8 +123,15 @@
                 @foreach (var livro in Model)
                 {
                     <div class="book-card">
-                        <img src="~/images/livros/@livro.Imagem" alt="@livro.Titulo" />
-                        <div class="book-title">@livro.Titulo</div>
+                        <a href="@Url.Action("Detalhes", "Livros", new { id = livro.ISBN, titulo = SlugHelper.GenerateSlug(livro.Titulo), returnUrl = ViewBag.CurrentUrl })" style="text-decoration: none; color: inherit;">
+                            <img src="~/images/livros/@livro.Imagem" alt="@livro.Titulo" />
+                        </a>
+                        <div class="book-title">
+                            <a href="@Url.Action("Detalhes", "Livros", new { id = livro.ISBN, titulo = SlugHelper.GenerateSlug(livro.Titulo), returnUrl = ViewBag.CurrentUrl })" style="text-decoration: none; color: inherit;">
+                                @livro.Titulo
+                            </a>
+
+                        </div>
                         <div class="book-author"><b>Autor:</b> @livro.Autor.Autor_Nome</div>
                         <div class="book-price"><b>Preço:</b> @livro.Preco.ToString("F2") €</div>
                     </div>

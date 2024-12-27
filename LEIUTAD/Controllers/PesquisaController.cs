@@ -19,6 +19,8 @@ namespace LEIUTAD.Controllers
         [HttpGet]
         public IActionResult Index(string query)
         {
+            ViewBag.CurrentUrl = Request.Path + Request.QueryString;
+
             if (string.IsNullOrWhiteSpace(query))
             {
                 ViewData["Mensagem"] = "Por favor, insira um termo para pesquisa.";
