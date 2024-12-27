@@ -1,0 +1,123 @@
+﻿@model LEIUTAD.Models.Livros
+
+@{
+    ViewData["Title"] = "Editar Livro";
+}
+
+<h2 class="text-center">Editar Livro</h2>
+
+<form asp-action="EditarLivro" method="post" enctype="multipart/form-data" style="max-width: 900px; margin: auto;">
+    <input type="hidden" asp-for="ISBN" />
+
+    <div class="row">
+        <!-- Título -->
+        <div class="col-md-6">
+            <div class="form-group">
+                <label asp-for="Titulo" class="form-label"></label>
+                <input asp-for="Titulo" class="form-control" />
+                <span asp-validation-for="Titulo" class="text-danger"></span>
+            </div>
+        </div>
+
+        <!-- Autor -->
+        <div class="col-md-6">
+            <div class="form-group">
+                <label for="ID_Autor" class="form-label">Autor:</label>
+                <select asp-for="ID_Autor" class="form-control">
+                    @foreach (var autor in ViewBag.Autores)
+                    {
+                        if (Model.ID_Autor.ToString() == autor.Value)
+                        {
+                            <option value="@autor.Value" selected="selected">@autor.Text</option>
+                        }
+                        else
+                        {
+                            <option value="@autor.Value">@autor.Text</option>
+                        }
+                    }
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-3">
+        <!-- Género -->
+        <div class="col-md-6">
+            <div class="form-group">
+                <label for="ID_Genero" class="form-label">Género:</label>
+                <select asp-for="ID_Genero" class="form-control">
+                    @foreach (var genero in ViewBag.Generos)
+                    {
+                        if (Model.ID_Genero.ToString() == genero.Value)
+                        {
+                            <option value="@genero.Value" selected="selected">@genero.Text</option>
+                        }
+                        else
+                        {
+                            <option value="@genero.Value">@genero.Text</option>
+                        }
+                    }
+                </select>
+
+            </div>
+        </div>
+
+        <!-- Preço -->
+        <div class="col-md-6">
+            <div class="form-group">
+                <label asp-for="Preco" class="form-label"></label>
+                <input asp-for="Preco" class="form-control" />
+                <span asp-validation-for="Preco" class="text-danger"></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-3">
+        <!-- Nº de Exemplares -->
+        <div class="col-md-6">
+            <div class="form-group">
+                <label asp-for="N_Exemplares" class="form-label"></label>
+                <input asp-for="N_Exemplares" class="form-control" />
+                <span asp-validation-for="N_Exemplares" class="text-danger"></span>
+            </div>
+        </div>
+
+        <!-- Sinopse -->
+        <div class="col-md-6">
+            <div class="form-group">
+                <label asp-for="Sinopse" class="form-label"></label>
+                <textarea asp-for="Sinopse" class="form-control" rows="4"></textarea>
+                <span asp-validation-for="Sinopse" class="text-danger"></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-3">
+        <!-- Imagem Atual -->
+        <div class="col-md-6 text-center">
+            <div class="form-group">
+                <label>Imagem Atual:</label>
+                <img src="~/images/livros/@Model.Imagem" alt="@Model.Titulo" class="img-fluid mb-2" style="max-width: 150px;" />
+            </div>
+        </div>
+
+        <!-- Nova Imagem -->
+        <div class="col-md-6 text-center">
+            <div class="form-group">
+                <label for="novaImagem">Nova Imagem:</label>
+                <input type="file" id="novaImagem" name="novaImagem" class="form-control" />
+            </div>
+        </div>
+    </div>
+
+    <!-- Botões -->
+    <div class="row mt-4">
+        <div class="col text-center">
+            <button type="submit" class="btn btn-primary">Guardar Alterações</button>
+            <a asp-action="GerirLivros" class="btn btn-secondary">Cancelar</a>
+        </div>
+    </div>
+
+    <!-- Espaçamento para evitar sobreposição com o footer -->
+    <div style="margin-bottom: 50px;"></div>
+</form>

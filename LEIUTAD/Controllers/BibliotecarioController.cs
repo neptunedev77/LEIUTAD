@@ -162,7 +162,7 @@ namespace LEIUTAD.Controllers
 
             return RedirectToAction("GerirLivros");
         }
-
+        // Pop up dos detalhes dos livros
         [HttpGet]
         public IActionResult DetalhesLivro(string id)
         {
@@ -179,6 +179,84 @@ namespace LEIUTAD.Controllers
 
             return PartialView("_DetalhesLivroModal", livro);
         }
+
+        [HttpGet]
+        public IActionResult EditarLivro(string id)
+        {
+            // Busca o livro pelo ISBN
+            var livro = _context.Livro.FirstOrDefault(l => l.ISBN == id);
+
+            if (livro == null)
+            {
+                TempData["MensagemErro"] = "Livro não encontrado.";
+                return RedirectToAction("GerirLivros");
+            }
+
+            // Carregar dropdowns para autores e géneros
+            CarregarDropdowns();
+
+            return View(livro);
+        }
+
+        [HttpPost]
+        public IActionResult EditarLivro(Livros livro, IFormFile novaImagem)
+        {
+            try
+            {
+                // Buscar o livro existente na base de dados para obter a imagem antiga
+                var livroExistente = _context.Livro.AsNoTracking().FirstOrDefault(l => l.ISBN == livro.ISBN);
+
+                if (livroExistente == null)
+                {
+                    TempData["MensagemErro"] = "Livro não encontrado.";
+                    return RedirectToAction("GerirLivros");
+                }
+
+                // Atribuir a imagem antiga ao objeto livro
+                livro.Imagem = livroExistente.Imagem;
+
+                // Verifica se uma nova imagem foi carregada
+                if (novaImagem != null && novaImagem.Length > 0)
+                {
+                    // Apaga a imagem antiga, se necessário
+                    var caminhoImagemAntiga = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images/livros", livro.Imagem);
+                    if (!string.IsNullOrEmpty(livro.Imagem) && livro.Imagem != "default.png" && System.IO.File.Exists(caminhoImagemAntiga))
+                    {
+                        System.IO.File.Delete(caminhoImagemAntiga);
+                    }
+
+                    // Salva a nova imagem
+                    var caminhoImagemNova = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images/livros", novaImagem.FileName);
+                    using (var stream = new FileStream(caminhoImagemNova, FileMode.Create))
+                    {
+                        novaImagem.CopyTo(stream);
+                    }
+
+                    // Atualiza o nome da imagem no objeto do livro
+                    livro.Imagem = novaImagem.FileName;
+                }
+
+                // Garante que o campo Imagem nunca será nulo
+                if (string.IsNullOrEmpty(livro.Imagem))
+                {
+                    livro.Imagem = "default.png";
+                }
+
+                // Atualiza o registro do livro no banco de dados
+                _context.Livro.Update(livro);
+                _context.SaveChanges();
+
+                TempData["MensagemSucesso"] = "Livro atualizado com sucesso.";
+                return RedirectToAction("GerirLivros");
+            }
+            catch (Exception ex)
+            {
+                TempData["MensagemErro"] = $"Erro ao atualizar livro: {ex.Message}";
+                return View(livro);
+            }
+        }
+
+
 
     }
 }

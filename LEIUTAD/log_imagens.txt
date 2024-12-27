@@ -1,0 +1,16 @@
+=== Início do Método EditarLivro - 27/12/2024 22:02:45 ===
+Nova imagem recebida: powerless.jpg
+Nova imagem salva com sucesso: C:\Users\tatia\Documents\GitHub\LEIUTAD\LEIUTAD\wwwroot/images/livros\powerless.jpg
+Livro atualizado com sucesso no banco de dados.
+=== Fim do Método EditarLivro - 27/12/2024 22:02:45 ===
+=== Início do Método EditarLivro - 27/12/2024 22:04:54 ===
+Nova imagem recebida: powerless.jpg isto é o que vai para o IF de baixo: 
+Nova imagem salva com sucesso: C:\Users\tatia\Documents\GitHub\LEIUTAD\LEIUTAD\wwwroot/images/livros\powerless.jpg
+Livro atualizado com sucesso no banco de dados.
+=== Fim do Método EditarLivro - 27/12/2024 22:04:54 ===
+=== Início do Método EditarLivro - 27/12/2024 22:10:08 ===
+Caminho da imagem antiga: C:\Users\tatia\Documents\GitHub\LEIUTAD\LEIUTAD\wwwroot/images/livros\altcover.jpg
+Imagem antiga apagada: C:\Users\tatia\Documents\GitHub\LEIUTAD\LEIUTAD\wwwroot/images/livros\altcover.jpg
+Nova imagem salva com sucesso: C:\Users\tatia\Documents\GitHub\LEIUTAD\LEIUTAD\wwwroot/images/livros\powerless.jpg
+Livro atualizado com sucesso no banco de dados.
+=== Fim do Método EditarLivro - 27/12/2024 22:10:09 ===

@@ -26,6 +26,10 @@ builder.Services.AddSession(options =>
 // Injeção de dependência para acesso ao HttpContext
 builder.Services.AddHttpContextAccessor();
 
+// Adicionar logging à consola
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
+
 var app = builder.Build();
 
 // Inicialização da base de dados
