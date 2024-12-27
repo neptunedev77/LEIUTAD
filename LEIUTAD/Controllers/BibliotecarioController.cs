@@ -4,6 +4,7 @@ using LEIUTAD.Filters; // Certifique-se de que este namespace está correto para
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 
 namespace LEIUTAD.Controllers
 {
@@ -161,5 +162,23 @@ namespace LEIUTAD.Controllers
 
             return RedirectToAction("GerirLivros");
         }
+
+        [HttpGet]
+        public IActionResult DetalhesLivro(string id)
+        {
+            // Buscar o livro pelo ISBN
+            var livro = _context.Livro
+                .Include(l => l.Autor)
+                .Include(l => l.Genero)
+                .FirstOrDefault(l => l.ISBN == id);
+
+            if (livro == null)
+            {
+                return NotFound();
+            }
+
+            return PartialView("_DetalhesLivroModal", livro);
+        }
+
     }
 }

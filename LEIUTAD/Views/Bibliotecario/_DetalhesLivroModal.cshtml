@@ -1,0 +1,24 @@
+﻿@model LEIUTAD.Models.Livros
+
+<div class="modal-header">
+    <h5 class="modal-title">Detalhes do Livro</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+</div>
+<div class="modal-body">
+    <div class="row">
+        <div class="col-md-4">
+            <img src="~/images/livros/@Model.Imagem" alt="@Model.Titulo" class="img-fluid rounded" />
+        </div>
+        <div class="col-md-8">
+            <p><strong>ISBN:</strong> @Model.ISBN</p>
+            <p><strong>Título:</strong> @Model.Titulo</p>
+            <p><strong>Autor:</strong> @Model.Autor.Autor_Nome</p>
+            <p><strong>Preço:</strong> @Model.Preco.ToString("F2") €</p>
+            <p><strong>Nº de Exemplares:</strong> @Model.N_Exemplares</p>
+            <p><strong>Sinopse:</strong> @Model.Sinopse</p>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+</div>
