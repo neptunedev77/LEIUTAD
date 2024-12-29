@@ -1,0 +1,61 @@
+﻿@model List<LEIUTAD.Models.Livros>
+
+<h2>Livros no Carrinho</h2>
+
+@if (TempData["MensagemSucesso"] != null)
+{
+    <div id="sucessoPopup" class="alert alert-success alert-dismissible fade show" role="alert">
+        @TempData["MensagemSucesso"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        <a href="@(!string.IsNullOrEmpty(ViewBag.ReturnUrl) ? ViewBag.ReturnUrl : Url.Action("Index", "Livros"))" class="btn btn-back">
+            <i class="fas fa-arrow-left"></i> Voltar
+        </a>
+    </div>
+}
+
+@if (TempData["MensagemErro"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        @TempData["MensagemErro"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+
+@if (!Model.Any())
+{
+    <p>O carrinho está vazio.</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ISBN</th>
+                <th>Título</th>
+                <th>Autor</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var livro in Model)
+            {
+                <tr>
+                    <td>@livro.ISBN</td>
+                    <td>@livro.Titulo</td>
+                    <td>@livro.Autor.Autor_Nome</td>
+                    <td>
+                        <form asp-action="RemoverDoCarrinho" asp-controller="Leitors" method="post">
+                            <input type="hidden" name="isbn" value="@livro.ISBN" />
+                            <button type="submit" class="btn btn-danger">Remover</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <form asp-action="FinalizarEmprestimo" asp-controller="Emprestimos" method="post">
+        <button type="submit" class="btn btn-primary">Concluir Empréstimo</button>
+    </form>
+}

@@ -44,6 +44,20 @@
             text-align: center;
             border-top: 10px #ddd;
         }
+
+        .btn-cart {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+        }
+
+            .btn-cart:hover {
+                background-color: #0056b3;
+                color: white;
+            }
     </style>
 </head>
 <body style="background-color: #fcf6eb;">
@@ -77,17 +91,25 @@
                         }
                     </ul>
                     <div class="d-flex ms-auto">
+                        @if (HttpContextAccessor.HttpContext.Session.GetString("UserRole") == "Leitor")
+                        {
+                            <a href="@Url.Action("VerCarrinho", "Leitors")" class="btn btn-primary me-3" style="text-decoration: none; color: white;">
+                                <i class="fa fa-shopping-cart"></i> Carrinho
+                                <span class="badge bg-danger">
+                                    @(HttpContextAccessor.HttpContext.Session.GetObjectFromJson<List<string>>("Carrinho")?.Count ?? 0)
+                                </span>
+                            </a>
+
+                        }
+
+
                         @if (HttpContextAccessor.HttpContext.Session.GetString("UserName") != null)
                         {
                             <!-- Utilizador autenticado -->
-                            @if (HttpContextAccessor.HttpContext.Session.GetString("UserRole") == "Leitor" ||
-                           HttpContextAccessor.HttpContext.Session.GetString("UserRole") == "Bibliotecario")
-                            {
-                                <form asp-area="" asp-controller="Pesquisa" asp-action="Index" method="get" class="d-flex me-3">
-                                    <input class="form-control me-2" type="search" name="query" placeholder="Pesquisar livros..." aria-label="Pesquisar">
-                                    <button class="btn btn-outline-success" type="submit">Pesquisar</button>
-                                </form>
-                            }
+                            <form asp-area="" asp-controller="Pesquisa" asp-action="Index" method="get" class="d-flex me-3">
+                                <input class="form-control me-2" type="search" name="query" placeholder="Pesquisar livros..." aria-label="Pesquisar">
+                                <button class="btn btn-outline-success" type="submit">Pesquisar</button>
+                            </form>
                             <span class="navbar-text me-3">Bem-vindo, @HttpContextAccessor.HttpContext.Session.GetString("UserName")</span>
                             <form asp-area="" asp-controller="Account" asp-action="Logout" method="post" class="d-inline">
                                 <button type="submit" class="btn btn-outline-danger">Logout</button>

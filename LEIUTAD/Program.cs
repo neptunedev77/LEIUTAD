@@ -69,5 +69,9 @@ app.UseAuthorization();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Livros}/{action=Index}/{id?}");
+app.MapControllerRoute(
+    name: "leitor",
+    pattern: "Leitors/{action=Index}/{id?}",
+    defaults: new { controller = "Leitor" });
 
 app.Run();

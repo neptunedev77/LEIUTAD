@@ -1,157 +1,114 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc;
+using LEIUTAD.Models;
+using LEIUTAD.Data;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using LEIUTAD.Data;
-using LEIUTAD.Models;
+using System.Text.Json;
 
 namespace LEIUTAD.Controllers
 {
-    public class LeitorsController : Controller
+    public class LeitorController : Controller
     {
         private readonly LEIUTADContext _context;
 
-        public LeitorsController(LEIUTADContext context)
+        public LeitorController(LEIUTADContext context)
         {
             _context = context;
         }
 
-        // GET: Leitors
-        public async Task<IActionResult> Index()
-        {
-            return View(await _context.Leitor.ToListAsync());
-        }
-
-        // GET: Leitors/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var leitor = await _context.Leitor
-                .FirstOrDefaultAsync(m => m.ID_user == id);
-            if (leitor == null)
-            {
-                return NotFound();
-            }
-
-            return View(leitor);
-        }
-
-        // GET: Leitors/Create
-        public IActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: Leitors/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID_user,Nome,PasswordHash,PasswordSalt,Email,Tele_n,Data_n,Endereco,Endereco_n,Localidade,Pais")] Leitor leitor)
+        public IActionResult AdicionarAoCarrinho([FromBody] JsonElement data)
         {
-            if (ModelState.IsValid)
+            // Extrair o valor de ISBN a partir do JsonElement
+            if (!data.TryGetProperty("isbn", out var isbnElement))
             {
-                _context.Add(leitor);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return Json(new
+                {
+                    sucesso = false,
+                    mensagem = "ISBN inválido ou não fornecido."
+                });
             }
-            return View(leitor);
+
+            var isbn = isbnElement.GetString();
+
+            // Verificar se o utilizador está autenticado como leitor
+            var userRole = HttpContext.Session.GetString("UserRole");
+            if (userRole != "Leitor")
+            {
+                return Json(new
+                {
+                    sucesso = false,
+                    mensagem = "Precisa de fazer login como leitor para adicionar ao carrinho.",
+                    linkLogin = Url.Action("Login", "Account")
+                });
+            }
+
+            // Obter o carrinho da sessão
+            var carrinho = HttpContext.Session.GetObjectFromJson<List<string>>("Carrinho") ?? new List<string>();
+
+            // Limitar a 5 livros
+            if (carrinho.Count >= 5)
+            {
+                return Json(new
+                {
+                    sucesso = false,
+                    mensagem = "Atingiu o limite de livros no carrinho."
+                });
+            }
+
+            // Adicionar ao carrinho, se ainda não estiver presente
+            if (!carrinho.Contains(isbn))
+            {
+                carrinho.Add(isbn);
+                HttpContext.Session.SetObjectAsJson("Carrinho", carrinho);
+
+                return Json(new
+                {
+                    sucesso = true,
+                    mensagem = "Livro adicionado ao carrinho com sucesso.",
+                    linkVerCarrinho = Url.Action("VerCarrinho", "Leitor")
+                });
+            }
+            else
+            {
+                return Json(new
+                {
+                    sucesso = false,
+                    mensagem = "O livro já está no carrinho."
+                });
+            }
         }
 
-        // GET: Leitors/Edit/5
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
 
-            var leitor = await _context.Leitor.FindAsync(id);
-            if (leitor == null)
-            {
-                return NotFound();
-            }
-            return View(leitor);
-        }
 
-        // POST: Leitors/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID_user,Nome,PasswordHash,PasswordSalt,Email,Tele_n,Data_n,Endereco,Endereco_n,Localidade,Pais")] Leitor leitor)
+        public IActionResult RemoverDoCarrinho(string isbn)
         {
-            if (id != leitor.ID_user)
+            var carrinho = HttpContext.Session.GetObjectFromJson<List<string>>("Carrinho") ?? new List<string>();
+
+            if (carrinho.Remove(isbn))
             {
-                return NotFound();
+                HttpContext.Session.SetObjectAsJson("Carrinho", carrinho);
+                TempData["MensagemSucesso"] = "Livro removido do carrinho.";
+            }
+            else
+            {
+                TempData["MensagemErro"] = "Livro não encontrado no carrinho.";
             }
 
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(leitor);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!LeitorExists(leitor.ID_user))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            return View(leitor);
+            return RedirectToAction("VerCarrinho");
         }
 
-        // GET: Leitors/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+
+
+        [HttpGet]
+        public IActionResult VerCarrinho()
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var leitor = await _context.Leitor
-                .FirstOrDefaultAsync(m => m.ID_user == id);
-            if (leitor == null)
-            {
-                return NotFound();
-            }
-
-            return View(leitor);
+            var carrinho = HttpContext.Session.GetObjectFromJson<List<string>>("Carrinho") ?? new List<string>();
+            var livros = _context.Livro.Include(l => l.Autor).Include(l => l.Genero).Where(l => carrinho.Contains(l.ISBN)).ToList();
+            return View(livros); 
         }
 
-        // POST: Leitors/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var leitor = await _context.Leitor.FindAsync(id);
-            if (leitor != null)
-            {
-                _context.Leitor.Remove(leitor);
-            }
-
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
-
-        private bool LeitorExists(int id)
-        {
-            return _context.Leitor.Any(e => e.ID_user == id);
-        }
     }
 }

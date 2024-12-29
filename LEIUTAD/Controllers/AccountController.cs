@@ -137,10 +137,10 @@ namespace LEIUTAD.Controllers
         }
 
 
-        // Logout
         [HttpPost]
         public IActionResult Logout()
         {
+            // Limpar a sessão do utilizador
             HttpContext.Session.Clear();
             return RedirectToAction("Login", "Account");
         }
