@@ -256,6 +256,24 @@ namespace LEIUTAD.Controllers
             }
         }
 
+        public IActionResult GerirEmprestimos()
+        {
+            var emprestimos = _context.Emprestimo
+                .Include(e => e.Leitor) // Inclui os dados do leitor associado
+                .Include(e => e.Emprestimo_Livros) // Inclui a relação de livros
+                .Select(e => new
+                {
+                    e.ID_Emp,
+                    e.ID_Leitor,
+                    NomeLeitor = e.Leitor.Nome, // Assumindo que o modelo Leitor tem o campo Nome
+                    NumeroLivros = e.Emprestimo_Livros.Count, // Contagem de livros associados ao empréstimo
+                    e.Data_Dev
+                })
+                .ToList();
+
+            return View(emprestimos);
+        }
+
 
 
     }
