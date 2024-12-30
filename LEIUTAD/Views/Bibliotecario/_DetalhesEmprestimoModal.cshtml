@@ -1,0 +1,35 @@
+﻿@model LEIUTAD.Models.Emprestimo
+
+<div class="modal-header">
+    <h5 class="modal-title">Detalhes do Empréstimo</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+</div>
+<div class="modal-body">
+    <p><strong>ID Empréstimo:</strong> @Model.ID_Emp</p>
+    <p><strong>ID Leitor:</strong> @Model.ID_Leitor</p>
+    <p><strong>Nome do Leitor:</strong> @(Model.Leitor?.Nome ?? "Leitor não encontrado")</p>
+    <p><strong>Número de Livros:</strong> @(Model.Emprestimo_Livros?.Count() ?? 0)</p>
+    <p><strong>Livros Requisitados:</strong></p>
+    <ul>
+        @if (Model.Emprestimo_Livros != null && Model.Emprestimo_Livros.Any())
+        {
+            foreach (var emprestimoLivro in Model.Emprestimo_Livros)
+            {
+                <li>
+                    <strong>ISBN:</strong> @(emprestimoLivro.Livro?.ISBN ?? "ISBN não encontrado") -
+                    <strong>Título:</strong> @(emprestimoLivro.Livro?.Titulo ?? "Título não encontrado")
+                </li>
+            }
+        }
+        else
+        {
+            <li>Não há livros associados a este empréstimo.</li>
+        }
+    </ul>
+    <p><strong>Data de Requisição:</strong> @Model.Data_Req.ToString("dd/MM/yyyy")</p>
+    <p><strong>Data de Devolução:</strong> @Model.Data_Dev.ToString("dd/MM/yyyy")</p>
+    <p><strong style="color: @(Model.Estado == "Por Devolver" ? "red" : "green");">Estado:</strong> @Model.Estado</p>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+</div>

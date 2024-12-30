@@ -265,9 +265,10 @@ namespace LEIUTAD.Controllers
                 {
                     e.ID_Emp,
                     e.ID_Leitor,
-                    NomeLeitor = e.Leitor.Nome, // Assumindo que o modelo Leitor tem o campo Nome
-                    NumeroLivros = e.Emprestimo_Livros.Count, // Contagem de livros associados ao empréstimo
-                    e.Data_Dev
+                    NomeLeitor = e.Leitor.Nome, // Nome do leitor
+                    NumeroLivros = e.Emprestimo_Livros.Count, // Contagem de livros associados
+                    e.Data_Dev,
+                    e.Estado // Adiciona o Estado do empréstimo
                 })
                 .ToList();
 
@@ -275,6 +276,24 @@ namespace LEIUTAD.Controllers
         }
 
 
+        [HttpGet]
+        public IActionResult DetalhesEmprestimo(int id)
+        {
+            // Carregar o empréstimo com todos os dados associados
+            var emprestimo = _context.Emprestimo
+                .Include(e => e.Leitor) // Inclui o leitor associado
+                .Include(e => e.Emprestimo_Livros) // Inclui a tabela associativa
+                    .ThenInclude(el => el.Livro) // Inclui os livros através da tabela associativa
+                .FirstOrDefault(e => e.ID_Emp == id);
+
+            // Verifica se o empréstimo foi encontrado
+            if (emprestimo == null)
+            {
+                return NotFound(); // Retorna 404 se não for encontrado
+            }
+
+            return PartialView("_DetalhesEmprestimoModal", emprestimo);
+        }
 
     }
 }
