@@ -389,9 +389,10 @@ namespace LEIUTAD.Controllers
             // Alterna a ordem para o próximo estado
             var novaOrdem = ordemAtual == "maisRecente" ? "maisAntigo" : "maisRecente";
 
-            // Obter todos os empréstimos
+            // Obter todos os empréstimos com leitores associados e livros associados
             var emprestimos = _context.Emprestimo
                 .Include(e => e.Leitor) // Inclui o leitor associado
+                .Include(e => e.Emprestimo_Livros) // Inclui os livros associados ao empréstimo
                 .AsQueryable();
 
             // Aplicar ordenação pela Data de Requisição
@@ -411,6 +412,38 @@ namespace LEIUTAD.Controllers
             return View(emprestimos.ToList());
         }
 
+
+        [HttpGet]
+        public IActionResult HistoricoEmprestimosLeitor(int idLeitor)
+        {
+            try
+            {
+                // Obter os empréstimos do leitor pelo ID
+                var emprestimos = _context.Emprestimo
+                    .Include(e => e.Leitor) // Inclui os dados do leitor associado
+                    .Include(e => e.Emprestimo_Livros) // Inclui os livros associados
+                    .Where(e => e.ID_Leitor == idLeitor) // Filtra pelo leitor
+                    .OrderByDescending(e => e.Data_Req) // Ordena do mais recente para o mais antigo
+                    .ToList();
+
+                if (!emprestimos.Any())
+                {
+                    TempData["MensagemErro"] = "Não foram encontrados empréstimos para este leitor.";
+                    return RedirectToAction("GerirEmprestimos");
+                }
+
+                // Passa o leitor para a ViewBag para exibir no histórico
+                ViewBag.LeitorNome = emprestimos.FirstOrDefault()?.Leitor?.Nome ?? "Leitor não encontrado";
+                ViewBag.ID_Leitor = idLeitor;
+
+                return View("HistoricoEmprestimosLeitor", emprestimos);
+            }
+            catch (Exception ex)
+            {
+                TempData["MensagemErro"] = $"Erro ao carregar histórico: {ex.Message}";
+                return RedirectToAction("GerirEmprestimos");
+            }
+        }
 
 
 

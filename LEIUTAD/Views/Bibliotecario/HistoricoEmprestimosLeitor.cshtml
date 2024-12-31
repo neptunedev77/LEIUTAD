@@ -1,38 +1,22 @@
 ﻿@model IEnumerable<LEIUTAD.Models.Emprestimo>
 
 @{
-    ViewData["Title"] = "Histórico de Empréstimos";
+    ViewData["Title"] = "Histórico de Empréstimos do Leitor";
 }
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
 
-<h2 class="text-center mb-4">Histórico de Empréstimos</h2>
-
-<!-- Botão de Filtrar -->
-<div class="d-flex justify-content-end mb-4">
-    <a href="@Url.Action("HistoricoEmprestimos", new { ordemAtual = ViewBag.OrdenacaoAtual == "maisRecente" ? "maisAntigo" : "maisRecente" })"
-       class="btn btn-primary">
-        Filtrar:
-        @if (ViewBag.OrdenacaoAtual == "maisRecente")
-        {
-            <span>Mais antigos</span>
-        }
-        else
-        {
-            <span>Mais recentes</span>
-        }
-    </a>
-</div>
+<h2 class="text-center mb-4">Histórico de Empréstimos - @ViewBag.LeitorNome</h2>
 
 <!-- Tabela de Histórico -->
 <table class="table table-bordered table-hover">
     <thead class="table-dark">
         <tr>
             <th>ID Empréstimo</th>
-            <th>ID Leitor</th>
-            <th>Nome do Leitor</th>
-            <th>Número de livros</th>
             <th>Data de Requisição</th>
             <th>Data de Devolução</th>
             <th>Estado</th>
+            <th>Número de Livros</th>
+            <th>Ações</th>
         </tr>
     </thead>
     <tbody>
@@ -40,18 +24,21 @@
         {
             <tr>
                 <td>@emprestimo.ID_Emp</td>
-                <td>@emprestimo.ID_Leitor</td>
-                <td>@(emprestimo.Leitor?.Nome ?? "Leitor não encontrado")</td>
-                <td>@(emprestimo.Emprestimo_Livros?.Count() ?? 0)</td>
                 <td>@emprestimo.Data_Req.ToString("dd/MM/yyyy")</td>
                 <td>@emprestimo.Data_Dev.ToString("dd/MM/yyyy")</td>
                 <td style="color: @(emprestimo.Estado == "Por Devolver" ? "red" : "green");">
                     @emprestimo.Estado
                 </td>
+                <td>@(emprestimo.Emprestimo_Livros?.Count() ?? 0)</td>
+                <td>
+                    <button type="button" class="btn btn-info btn-sm" title="Detalhes" data-bs-toggle="modal" data-bs-target="#detalhesModal" onclick="carregarDetalhesEmprestimo(@emprestimo.ID_Emp)">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                </td>
+
             </tr>
         }
     </tbody>
-
 </table>
 
 <!-- Modal para exibir os detalhes do empréstimo -->

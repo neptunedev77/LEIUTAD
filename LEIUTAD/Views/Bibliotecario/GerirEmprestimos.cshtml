@@ -165,9 +165,12 @@
                             <a href="@Url.Action("EnviarNotificacao", "Bibliotecario", new { id = emprestimo.ID_Emp })" class="btn btn-warning btn-sm" title="Notificar">
                                 <i class="fa fa-envelope"></i>
                             </a>
-                            <a href="@Url.Action("HistoricoEmprestimo", "Bibliotecario", new { id = emprestimo.ID_Emp })" class="btn btn-secondary btn-sm" title="Histórico">
+                            <a href="@Url.Action("HistoricoEmprestimosLeitor", "Bibliotecario", new { idLeitor = emprestimo.ID_Leitor })"
+                               class="btn btn-secondary btn-sm"
+                               title="Histórico do Leitor">
                                 <i class="fa fa-history"></i>
                             </a>
+
                         </td>
                     </tr>
                 }
