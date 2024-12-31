@@ -34,6 +34,8 @@ namespace LEIUTAD.Controllers
             return View(livros);
         }
 
+
+
         [HttpGet]
         public IActionResult AdicionarLivro()
         {
@@ -380,6 +382,36 @@ namespace LEIUTAD.Controllers
                 return RedirectToAction("GerirEmprestimos");
             }
         }
+
+        [HttpGet]
+        public IActionResult HistoricoEmprestimos(string ordemAtual = "maisRecente")
+        {
+            // Alterna a ordem para o próximo estado
+            var novaOrdem = ordemAtual == "maisRecente" ? "maisAntigo" : "maisRecente";
+
+            // Obter todos os empréstimos
+            var emprestimos = _context.Emprestimo
+                .Include(e => e.Leitor) // Inclui o leitor associado
+                .AsQueryable();
+
+            // Aplicar ordenação pela Data de Requisição
+            if (ordemAtual == "maisAntigo")
+            {
+                emprestimos = emprestimos.OrderBy(e => e.Data_Req);
+            }
+            else // Padrão: Mais recente
+            {
+                emprestimos = emprestimos.OrderByDescending(e => e.Data_Req);
+            }
+
+            // Passar a nova ordem para a View
+            ViewBag.NovaOrdem = novaOrdem;
+            ViewBag.OrdenacaoAtual = ordemAtual;
+
+            return View(emprestimos.ToList());
+        }
+
+
 
 
     }

@@ -1,0 +1,52 @@
+﻿@model IEnumerable<LEIUTAD.Models.Emprestimo>
+
+@{
+    ViewData["Title"] = "Histórico de Empréstimos";
+}
+
+<h2 class="text-center mb-4">Histórico de Empréstimos</h2>
+
+<!-- Botão de Filtrar -->
+<div class="d-flex justify-content-end mb-4">
+    <a href="@Url.Action("HistoricoEmprestimos", new { ordemAtual = ViewBag.OrdenacaoAtual == "maisRecente" ? "maisAntigo" : "maisRecente" })"
+       class="btn btn-primary">
+        Filtrar:
+        @if (ViewBag.OrdenacaoAtual == "maisRecente")
+        {
+            <span>Mais antigos</span>
+        }
+        else
+        {
+            <span>Mais recentes</span>
+        }
+    </a>
+</div>
+
+<!-- Tabela de Histórico -->
+<table class="table table-bordered table-hover">
+    <thead class="table-dark">
+        <tr>
+            <th>ID Empréstimo</th>
+            <th>ID Leitor</th>
+            <th>Nome do Leitor</th>
+            <th>Data de Requisição</th>
+            <th>Data de Devolução</th>
+            <th>Estado</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var emprestimo in Model)
+        {
+            <tr>
+                <td>@emprestimo.ID_Emp</td>
+                <td>@emprestimo.ID_Leitor</td>
+                <td>@emprestimo.Leitor?.Nome ?? "Leitor não encontrado"</td>
+                <td>@emprestimo.Data_Req.ToString("dd/MM/yyyy")</td>
+                <td>@emprestimo.Data_Dev.ToString("dd/MM/yyyy")</td>
+                <td style="color: @(emprestimo.Estado == "Por Devolver" ? "red" : "green");">
+                    @emprestimo.Estado
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
