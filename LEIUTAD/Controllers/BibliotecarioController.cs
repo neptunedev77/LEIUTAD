@@ -21,9 +21,71 @@ namespace LEIUTAD.Controllers
         [HttpGet]
         public IActionResult Index()
         {
+            // Total de livros cadastrados
+            var totalLivros = _context.Livro.Count();
+
+            // Total de leitores cadastrados
+            var totalLeitores = _context.Leitor.Count();
+
+            // Total de empréstimos realizados
+            var totalEmprestimos = _context.Emprestimo.Count();
+
+            // Livro mais requisitado
+            var livroMaisRequisitado = _context.Emprestimo_Livro
+                .GroupBy(el => el.Livro.ISBN)
+                .OrderByDescending(g => g.Count())
+                .Select(g => new
+                {
+                    Titulo = g.FirstOrDefault().Livro.Titulo,
+                    Quantidade = g.Count()
+                })
+                .FirstOrDefault();
+
+            ViewBag.LivroMaisRequisitado = livroMaisRequisitado?.Titulo ?? "Nenhum empréstimo";
+            ViewBag.LivroMaisRequisitadoQuantidade = livroMaisRequisitado?.Quantidade ?? 0;
+
+            // Percentagem de livros requisitados
+            int totalExemplares = 0;
+            foreach (var livro in _context.Livro)
+            {
+                if (int.TryParse(livro.N_Exemplares, out var exemplares))
+                {
+                    totalExemplares += exemplares;
+                }
+            }
+
+            var totalExemplaresEmprestados = _context.Emprestimo_Livro.Count();
+
+            var percentagemRequisitados = totalExemplares > 0
+                ? Math.Round((double)totalExemplaresEmprestados / totalExemplares * 100, 2)
+                : 0;
+
+            ViewBag.PercentagemRequisitados = percentagemRequisitados;
+
+            // Género literário mais popular
+            var generoMaisPopular = _context.Emprestimo_Livro
+                .Where(el => el.Livro.Genero != null)
+                .GroupBy(el => el.Livro.Genero.Genero)
+                .OrderByDescending(g => g.Count())
+                .Select(g => new
+                {
+                    Genero = g.Key,
+                    Quantidade = g.Count()
+                })
+                .FirstOrDefault();
+
+            ViewBag.GeneroMaisPopular = generoMaisPopular?.Genero ?? "Nenhum género";
+            ViewBag.GeneroMaisPopularQuantidade = generoMaisPopular?.Quantidade ?? 0;
+
+            // Passar os dados para a View
+            ViewBag.TotalLivros = totalLivros;
+            ViewBag.TotalLeitores = totalLeitores;
+            ViewBag.TotalEmprestimos = totalEmprestimos;
             ViewData["ActiveTab"] = "Dashboard";
+
             return View();
         }
+
 
         [HttpGet]
         public IActionResult GerirLivros()

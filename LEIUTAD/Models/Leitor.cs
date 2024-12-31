@@ -28,7 +28,7 @@ namespace LEIUTAD.Models
         [Required(ErrorMessage = "É obrigatório colocar um país.")]
         public string Pais { get; set; }
         public bool Estado { get; set; } = false; // False por padrão, conta não verificada
-
+        public bool IsBloqueado { get; set; } = false; // False significa desbloqueado por padrão
         public ICollection<Emprestimo> Emprestimos { get; set; }
     }
 }

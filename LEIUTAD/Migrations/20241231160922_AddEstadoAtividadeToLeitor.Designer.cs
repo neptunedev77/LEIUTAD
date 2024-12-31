@@ -4,6 +4,7 @@ using LEIUTAD.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LEIUTAD.Migrations
 {
     [DbContext(typeof(LEIUTADContext))]
-    partial class LEIUTADContextModelSnapshot : ModelSnapshot
+    [Migration("20241231160922_AddEstadoAtividadeToLeitor")]
+    partial class AddEstadoAtividadeToLeitor
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -184,6 +187,10 @@ namespace LEIUTAD.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("ID_user"));
 
+                    b.Property<string>("Atividade")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
                     b.Property<DateTime>("Data_n")
                         .HasColumnType("datetime(6)");
 
@@ -200,9 +207,6 @@ namespace LEIUTAD.Migrations
                         .HasColumnType("longtext");
 
                     b.Property<bool>("Estado")
-                        .HasColumnType("tinyint(1)");
-
-                    b.Property<bool>("IsBloqueado")
                         .HasColumnType("tinyint(1)");
 
                     b.Property<string>("Localidade")

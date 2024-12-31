@@ -53,7 +53,7 @@ namespace LEIUTAD.Controllers
                 _context.SaveChanges();
 
                 // Redirecionar após o registo
-                return RedirectToAction("Index", "Livros");
+                return RedirectToAction("Login", "Account");
             }
 
             return View(model);
