@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using LEIUTAD.Data;
 using LEIUTAD.Filters;
+using LEIUTAD.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -30,6 +31,9 @@ builder.Services.AddHttpContextAccessor();
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
 
+// Registrar EmailService
+builder.Services.AddSingleton<EmailService>();
+
 var app = builder.Build();
 
 // Inicialização da base de dados
@@ -47,6 +51,7 @@ using (var scope = app.Services.CreateScope())
         logger.LogError(ex, "Ocorreu um erro ao inicializar a BD");
     }
 }
+
 
 // Configure o pipeline HTTP
 if (!app.Environment.IsDevelopment())

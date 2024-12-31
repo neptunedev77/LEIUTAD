@@ -4,16 +4,18 @@ using LEIUTAD.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Cryptography;
 using System.Text;
+using System.Web;
 
 namespace LEIUTAD.Controllers
 {
     public class AccountController : Controller
     {
         private readonly LEIUTADContext _context;
-
-        public AccountController(LEIUTADContext context)
+        private readonly EmailService _emailService;
+        public AccountController(LEIUTADContext context, EmailService emailService)
         {
             _context = context;
+            _emailService = emailService;
         }
 
         [HttpGet]
@@ -52,8 +54,10 @@ namespace LEIUTAD.Controllers
                 _context.Leitor.Add(leitor);
                 _context.SaveChanges();
 
-                // Redirecionar após o registo
-                return RedirectToAction("Login", "Account");
+                EnviarEmailVerificacao(leitor);
+                TempData["MensagemSucesso"] = "Conta criada com sucesso! Por favor, verifique o seu email para ativar a conta.";
+                return RedirectToAction("Login");
+
             }
 
             return View(model);
@@ -130,6 +134,41 @@ namespace LEIUTAD.Controllers
 
             return View(model);
         }
+
+        public void EnviarEmailVerificacao(Leitor leitor)
+        {
+            var token = Guid.NewGuid().ToString(); // Gera um token único
+            leitor.TokenVerificacao = token;
+            _context.SaveChanges();
+
+            var urlVerificacao = Url.Action("VerificarConta", "Account", new { token }, Request.Scheme);
+
+            var subject = "Verificação de Conta";
+            var body = $"<p>Clique no link abaixo para verificar a sua conta:</p><p><a href='{urlVerificacao}'>Verificar Conta</a></p>";
+
+            _emailService.SendEmail(leitor.Email, subject, body); // Usa o serviço injetado
+        }
+
+
+        [HttpGet]
+        public IActionResult VerificarConta(string token)
+        {
+            var user = _context.Leitor.SingleOrDefault(l => l.TokenVerificacao == token);
+
+            if (user == null)
+            {
+                TempData["MensagemErro"] = "Token de verificação inválido ou expirado.";
+                return RedirectToAction("Login");
+            }
+
+            user.Estado = true; // Ativa a conta
+            user.TokenVerificacao = null; // Remove o token após verificação
+            _context.SaveChanges();
+
+            TempData["MensagemSucesso"] = "Conta verificada com sucesso!";
+            return RedirectToAction("Login");
+        }
+
 
         public IActionResult AccessDenied()
         {

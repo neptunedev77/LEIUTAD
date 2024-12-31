@@ -29,6 +29,8 @@ namespace LEIUTAD.Models
         public string Pais { get; set; }
         public bool Estado { get; set; } = false; // False por padrão, conta não verificada
         public bool IsBloqueado { get; set; } = false; // False significa desbloqueado por padrão
+        public string? TokenVerificacao { get; set; }
+
         public ICollection<Emprestimo> Emprestimos { get; set; }
     }
 }
