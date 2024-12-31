@@ -26,7 +26,7 @@ namespace LEIUTAD.Controllers
             {
                 TempData["MensagemErro"] = "O utilizador não está autenticado.";
                 return RedirectToAction("Login", "Account");
-            }      
+            }
 
             if (!carrinho.Any())
             {
@@ -44,20 +44,45 @@ namespace LEIUTAD.Controllers
                 return RedirectToAction("VerCarrinho", "Leitor");
             }
 
+            using var transaction = _context.Database.BeginTransaction(); // Garantir consistência
             try
             {
+                // Criar novo empréstimo
                 var emprestimo = new Emprestimo
                 {
                     ID_Leitor = leitorId.Value,
                     Data_Req = DateTime.Now,
-                    Data_Dev = DateTime.Now.AddDays(14)
+                    Data_Dev = DateTime.Now.AddDays(14),
+                    Estado = "Por Devolver"
                 };
 
                 _context.Emprestimo.Add(emprestimo);
                 _context.SaveChanges();
 
+                // Associar livros ao empréstimo e atualizar o número de exemplares
                 foreach (var isbn in carrinho)
                 {
+                    var livro = _context.Livro.FirstOrDefault(l => l.ISBN == isbn);
+
+                    if (livro == null)
+                    {
+                        TempData["MensagemErro"] = $"Livro com ISBN {isbn} não encontrado.";
+                        return RedirectToAction("VerCarrinho", "Leitor");
+                    }
+
+                    // Verificar disponibilidade de exemplares
+                    int exemplaresDisponiveis = int.Parse(livro.N_Exemplares);
+                    if (exemplaresDisponiveis <= 0)
+                    {
+                        TempData["MensagemErro"] = $"O livro '{livro.Titulo}' está esgotado e não pode ser requisitado.";
+                        return RedirectToAction("VerCarrinho", "Leitor");
+                    }
+
+                    // Reduzir número de exemplares
+                    exemplaresDisponiveis -= 1;
+                    livro.N_Exemplares = exemplaresDisponiveis.ToString();
+
+                    // Associar livro ao empréstimo
                     _context.Emprestimo_Livro.Add(new Emprestimo_Livro
                     {
                         ID_Emp = emprestimo.ID_Emp,
@@ -65,8 +90,11 @@ namespace LEIUTAD.Controllers
                     });
                 }
 
+                // Salvar alterações na base de dados
                 _context.SaveChanges();
+                transaction.Commit();
 
+                // Limpar o carrinho
                 HttpContext.Session.Remove("Carrinho");
                 HttpContext.Session.SetInt32("CarrinhoCount", 0);
 
@@ -75,11 +103,13 @@ namespace LEIUTAD.Controllers
             }
             catch (Exception ex)
             {
+                transaction.Rollback(); // Reverter alterações em caso de erro
                 var detailedError = ex.InnerException != null ? ex.InnerException.Message : "Sem detalhes adicionais.";
                 System.IO.File.AppendAllText("log_emprestimo.txt", $"Erro ao salvar na base de dados: {ex.Message}\nDetalhes: {detailedError}\nStackTrace: {ex.StackTrace}\n");
                 TempData["MensagemErro"] = $"Erro ao concluir empréstimo: {ex.Message}";
                 return RedirectToAction("VerCarrinho", "Leitor");
             }
         }
+
     }
 }

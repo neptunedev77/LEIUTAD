@@ -150,22 +150,31 @@
                 <p><span>Sinopse:</span> @Model.Sinopse</p>
                 <p><span>Autor:</span> @Model.Autor.Autor_Nome</p>
                 <p><span>Género:</span> @Model.Genero.Genero</p>
-                <p><span>Estado:</span> Ainda nao adicionei o campo do estado (relativo aos emprestimos)</p>
+                <p><span>Exemplares Disponíveis:</span> @Model.N_Exemplares</p> 
             </div>
         </div>
 
+        <!-- Botões -->
         <!-- Botões -->
         <div class="details-buttons footer-space">
             <a href="@(!string.IsNullOrEmpty(ViewBag.ReturnUrl) ? ViewBag.ReturnUrl : Url.Action("Index", "Livros"))" class="btn btn-back">
                 <i class="fas fa-arrow-left"></i> Voltar
             </a>
-            <form asp-action="AdicionarAoCarrinho" asp-controller="Leitors" method="post" class="d-inline">
-                <input type="hidden" name="isbn" value="@Model.ISBN" />
-                <button class="btn btn-request" data-isbn="@Model.ISBN">
-                    <i class="fas fa-shopping-cart"></i> Requisitar
-                </button>
-                <div class="mensagemErro mt-2"></div>
-            </form>
+            @if (int.Parse(Model.N_Exemplares) > 0)
+            {
+                <form asp-action="AdicionarAoCarrinho" asp-controller="Leitor" method="post" class="d-inline">
+                    <input type="hidden" name="isbn" value="@Model.ISBN" />
+                    <button class="btn btn-request" data-isbn="@Model.ISBN">
+                        <i class="fas fa-shopping-cart"></i> Requisitar
+                    </button>
+                </form>
+            }
+            else
+            {
+                <div class="alert alert-danger mt-2" role="alert">
+                    Este livro está esgotado e não pode ser requisitado.
+                </div>
+            }
         </div>
     </div>
 

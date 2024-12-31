@@ -44,6 +44,17 @@ namespace LEIUTAD.Controllers
                 });
             }
 
+            // Verificar se o livro existe e se há exemplares disponíveis
+            var livro = _context.Livro.FirstOrDefault(l => l.ISBN == isbn);
+            if (livro == null || int.Parse(livro.N_Exemplares) <= 0)
+            {
+                return Json(new
+                {
+                    sucesso = false,
+                    mensagem = "Este livro está esgotado e não pode ser requisitado."
+                });
+            }
+
             // Obter o carrinho da sessão
             var carrinho = HttpContext.Session.GetObjectFromJson<List<string>>("Carrinho") ?? new List<string>();
 
@@ -79,6 +90,7 @@ namespace LEIUTAD.Controllers
                 });
             }
         }
+
 
 
 

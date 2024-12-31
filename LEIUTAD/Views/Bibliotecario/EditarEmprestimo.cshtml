@@ -1,0 +1,72 @@
+﻿@model LEIUTAD.Models.Emprestimo
+
+@{
+    ViewData["Title"] = "Editar Empréstimo";
+}
+
+<h2 class="text-center">Editar Empréstimo</h2>
+
+<form asp-action="EditarEmprestimo" method="post" style="max-width: 900px; margin: auto;">
+    <input type="hidden" asp-for="ID_Emp" />
+
+    <div class="row">
+        <!-- ID do Leitor -->
+        <div class="col-md-6">
+            <div class="form-group">
+                <label asp-for="ID_Leitor" class="form-label"></label>
+                <input asp-for="ID_Leitor" class="form-control" disabled />
+            </div>
+        </div>
+
+        <!-- Nome do Leitor -->
+        <div class="col-md-6">
+            <div class="form-group">
+                <label for="NomeLeitor" class="form-label">Nome do Leitor</label>
+                <input type="text" class="form-control" value="@Model.Leitor?.Nome" disabled />
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-3">
+        <!-- Data de Requisição -->
+        <div class="col-md-6">
+            <div class="form-group">
+                <label asp-for="Data_Req" class="form-label"></label>
+                <input asp-for="Data_Req" class="form-control" disabled />
+            </div>
+        </div>
+
+        <!-- Data de Devolução -->
+        <div class="col-md-6">
+            <div class="form-group">
+                <label asp-for="Data_Dev" class="form-label"></label>
+                <input asp-for="Data_Dev" class="form-control" disabled />
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-3">
+        <!-- Estado -->
+        <div class="col-md-6">
+            <div class="form-group">
+                <label asp-for="Estado" class="form-label"></label>
+                <select asp-for="Estado" class="form-control">
+                    <option value="Por Devolver" selected="@(Model.Estado == "Por Devolver")">Por Devolver</option>
+                    <option value="Devolvido" selected="@(Model.Estado == "Devolvido")">Devolvido</option>
+                </select>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Botões -->
+    <div class="row mt-4">
+        <div class="col text-center">
+            <button type="submit" class="btn btn-primary">Guardar Alterações</button>
+            <a asp-action="GerirEmprestimos" class="btn btn-secondary">Cancelar</a>
+        </div>
+    </div>
+
+    <!-- Espaçamento para evitar sobreposição com o footer -->
+    <div style="margin-bottom: 50px;"></div>
+</form>

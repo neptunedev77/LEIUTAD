@@ -28,7 +28,8 @@
     </ul>
     <p><strong>Data de Requisição:</strong> @Model.Data_Req.ToString("dd/MM/yyyy")</p>
     <p><strong>Data de Devolução:</strong> @Model.Data_Dev.ToString("dd/MM/yyyy")</p>
-    <p><strong style="color: @(Model.Estado == "Por Devolver" ? "red" : "green");">Estado:</strong> @Model.Estado</p>
+    <p><strong>Estado:</strong> <span style="color: @(Model.Estado == "Por Devolver" ? "red" : "green");">@Model.Estado</span></p>
+
 </div>
 <div class="modal-footer">
     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>

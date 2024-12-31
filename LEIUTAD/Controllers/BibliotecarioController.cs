@@ -292,8 +292,95 @@ namespace LEIUTAD.Controllers
                 return NotFound(); // Retorna 404 se não for encontrado
             }
 
+            // Passar os livros e o número atual de exemplares para a ViewBag
+            var livrosInfo = emprestimo.Emprestimo_Livros.Select(el => new
+            {
+                Titulo = el.Livro?.Titulo ?? "Livro não encontrado",
+                ExemplaresAtuais = el.Livro?.N_Exemplares ?? "0" // Número atual de exemplares
+            }).ToList();
+
+            ViewBag.LivrosInfo = livrosInfo;
+
             return PartialView("_DetalhesEmprestimoModal", emprestimo);
         }
+
+
+
+        [HttpGet]
+        public IActionResult EditarEmprestimo(int id)
+        {
+            // Busca o empréstimo pelo ID
+            var emprestimo = _context.Emprestimo
+                .Include(e => e.Leitor) // Inclui o leitor associado
+                .FirstOrDefault(e => e.ID_Emp == id);
+
+            if (emprestimo == null)
+            {
+                TempData["MensagemErro"] = "Empréstimo não encontrado.";
+                return RedirectToAction("GerirEmprestimos");
+            }
+
+            return View(emprestimo);
+        }
+
+        [HttpPost]
+        public IActionResult EditarEmprestimo(Emprestimo emprestimo)
+        {
+            try
+            {
+                // Obter o empréstimo existente na base de dados, incluindo os livros associados
+                var emprestimoExistente = _context.Emprestimo
+                    .Include(e => e.Emprestimo_Livros) // Inclui a relação de livros associados
+                        .ThenInclude(el => el.Livro)   // Inclui os dados dos livros
+                    .FirstOrDefault(e => e.ID_Emp == emprestimo.ID_Emp);
+
+                if (emprestimoExistente == null)
+                {
+                    TempData["MensagemErro"] = "Empréstimo não encontrado.";
+                    return RedirectToAction("GerirEmprestimos");
+                }
+
+                // Verificar se o estado foi alterado de "Por Devolver" para "Devolvido"
+                if (emprestimoExistente.Estado == "Por Devolver" && emprestimo.Estado == "Devolvido")
+                {
+                    foreach (var emprestimoLivro in emprestimoExistente.Emprestimo_Livros)
+                    {
+                        // Atualizar o número de exemplares do livro
+                        if (int.TryParse(emprestimoLivro.Livro.N_Exemplares, out int exemplaresAtuais))
+                        {
+                            emprestimoLivro.Livro.N_Exemplares = (exemplaresAtuais + 1).ToString();
+                        }
+                    }
+                }
+                // Verificar se o estado foi alterado de "Devolvido" para "Por Devolver"
+                else if (emprestimoExistente.Estado == "Devolvido" && emprestimo.Estado == "Por Devolver")
+                {
+                    foreach (var emprestimoLivro in emprestimoExistente.Emprestimo_Livros)
+                    {
+                        // Atualizar o número de exemplares do livro
+                        if (int.TryParse(emprestimoLivro.Livro.N_Exemplares, out int exemplaresAtuais) && exemplaresAtuais > 0)
+                        {
+                            emprestimoLivro.Livro.N_Exemplares = (exemplaresAtuais - 1).ToString();
+                        }
+                    }
+                }
+
+                // Atualizar apenas o estado do empréstimo
+                emprestimoExistente.Estado = emprestimo.Estado;
+
+                // Salvar as alterações na base de dados
+                _context.SaveChanges();
+
+                TempData["MensagemSucesso"] = "Estado do empréstimo atualizado com sucesso.";
+                return RedirectToAction("GerirEmprestimos");
+            }
+            catch (Exception ex)
+            {
+                TempData["MensagemErro"] = $"Erro ao atualizar o empréstimo: {ex.Message}";
+                return RedirectToAction("GerirEmprestimos");
+            }
+        }
+
 
     }
 }

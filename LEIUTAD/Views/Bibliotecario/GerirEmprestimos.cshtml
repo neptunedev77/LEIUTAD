@@ -148,7 +148,9 @@
                             <button type="button" class="btn btn-info btn-sm" title="Detalhes" data-bs-toggle="modal" data-bs-target="#detalhesModal" onclick="carregarDetalhesEmprestimo(@emprestimo.ID_Emp)">
                                 <i class="fa fa-eye"></i>
                             </button>
-
+                            <a href="@Url.Action("EditarEmprestimo", "Bibliotecario", new { id = emprestimo.ID_Emp })" class="btn btn-primary btn-sm" title="Editar">
+                                <i class="fa fa-pencil-alt"></i>
+                            </a>
                             <a href="@Url.Action("EnviarNotificacao", "Bibliotecario", new { id = emprestimo.ID_Emp })" class="btn btn-warning btn-sm" title="Notificar">
                                 <i class="fa fa-envelope"></i>
                             </a>
