@@ -21,13 +21,9 @@ namespace LEIUTAD.Controllers
         [HttpGet]
         public IActionResult Index()
         {
-            // Total de livros cadastrados
+            // Dados já existentes
             var totalLivros = _context.Livro.Count();
-
-            // Total de leitores cadastrados
             var totalLeitores = _context.Leitor.Count();
-
-            // Total de empréstimos realizados
             var totalEmprestimos = _context.Emprestimo.Count();
 
             // Livro mais requisitado
@@ -40,7 +36,6 @@ namespace LEIUTAD.Controllers
                     Quantidade = g.Count()
                 })
                 .FirstOrDefault();
-
             ViewBag.LivroMaisRequisitado = livroMaisRequisitado?.Titulo ?? "Nenhum empréstimo";
             ViewBag.LivroMaisRequisitadoQuantidade = livroMaisRequisitado?.Quantidade ?? 0;
 
@@ -53,13 +48,10 @@ namespace LEIUTAD.Controllers
                     totalExemplares += exemplares;
                 }
             }
-
             var totalExemplaresEmprestados = _context.Emprestimo_Livro.Count();
-
             var percentagemRequisitados = totalExemplares > 0
                 ? Math.Round((double)totalExemplaresEmprestados / totalExemplares * 100, 2)
                 : 0;
-
             ViewBag.PercentagemRequisitados = percentagemRequisitados;
 
             // Género literário mais popular
@@ -73,18 +65,31 @@ namespace LEIUTAD.Controllers
                     Quantidade = g.Count()
                 })
                 .FirstOrDefault();
-
             ViewBag.GeneroMaisPopular = generoMaisPopular?.Genero ?? "Nenhum género";
             ViewBag.GeneroMaisPopularQuantidade = generoMaisPopular?.Quantidade ?? 0;
 
-            // Passar os dados para a View
+            // **Calculando Empréstimos em Atraso**
+            var hoje = DateTime.Now;
+            var emprestimosEmAtraso = _context.Emprestimo
+                .Include(e => e.Leitor)
+                .Where(e => e.Estado == "Por Devolver" && e.Data_Dev < hoje)
+                .Select(e => new
+                {
+                    e.ID_Emp,
+                    NomeLeitor = e.Leitor.Nome,
+                    e.Data_Dev
+                })
+                .ToList();
+            ViewBag.EmprestimosEmAtraso = emprestimosEmAtraso;
+
+            // Passar dados para a View
             ViewBag.TotalLivros = totalLivros;
             ViewBag.TotalLeitores = totalLeitores;
             ViewBag.TotalEmprestimos = totalEmprestimos;
-            ViewData["ActiveTab"] = "Dashboard";
 
             return View();
         }
+
 
 
         [HttpGet]

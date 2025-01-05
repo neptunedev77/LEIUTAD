@@ -1,0 +1,49 @@
+﻿@model List<LEIUTAD.ViewModels.HistoricoEmprestimoViewModel>
+
+@{
+    ViewData["Title"] = "Histórico de Empréstimos";
+}
+
+<h2 class="text-center mb-4">Histórico de Empréstimos</h2>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info text-center">
+        <p>Não existem empréstimos no seu histórico.</p>
+    </div>
+}
+else
+{
+    <table class="table table-bordered table-hover">
+        <thead class="table-dark text-center">
+            <tr>
+                <th>#</th>
+                <th>Livros Requisitados</th>
+                <th>Data de Empréstimo</th>
+                <th>Data de Devolução</th>
+                <th>Estado</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td class="text-center">@item.IDEmprestimo</td>
+                    <td>
+                        <ul>
+                            @foreach (var livro in item.Livros)
+                            {
+                                <li>@livro</li>
+                            }
+                        </ul>
+                    </td>
+                    <td class="text-center">@item.DataRequisicao.ToString("dd/MM/yyyy")</td>
+                    <td class="text-center">@item.DataDevolucao.ToString("dd/MM/yyyy")</td>
+                    <td class="text-center" style="color: @(item.Estado == "Por Devolver" ? "red" : "green")">
+                        @item.Estado
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

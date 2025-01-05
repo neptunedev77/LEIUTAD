@@ -116,6 +116,10 @@
                                     @(HttpContextAccessor.HttpContext.Session.GetObjectFromJson<List<string>>("Carrinho")?.Count ?? 0)
                                 </span>
                             </a>
+                            <!-- Botão do Histórico -->
+                            <a href="@Url.Action("Historico", "Leitor")" class="btn btn-secondary me-3" style="text-decoration: none; color: white;">
+                                <i class="fa fa-history"></i> Histórico
+                            </a>
 
                         }
 

@@ -110,6 +110,10 @@
                 <i class="fas fa-search"></i>
             </button>
         </div>
+        <div class="mb-3 text-end">
+            <a asp-action="AdicionarAdministrador" class="btn btn-success">Adicionar Administrador</a>
+        </div>
+
 
         <!-- Tabela de Utilizadores -->
         <table class="table table-bordered table-hover" id="utilizadoresTable">
@@ -124,33 +128,38 @@
             <tbody>
                 @foreach (var user in Model)
                 {
-                    <tr>
-                        <td class="text-center">@user.ID</td>
-                        <td><b>@user.Nome</b></td>
-                        <td>@user.Cargo</td>
-                        <td class="text-center">
-                            <!-- Botão de Visualizar -->
-                            <button type="button" class="btn btn-info btn-action" data-bs-toggle="modal"
-                                    onclick="carregarDetalhesUtilizador(@user.ID, '@user.Cargo')" title="Visualizar">
-                                <i class="fas fa-eye"></i>
-                            </button>
+                        <tr>
+                            <td class="text-center">@user.ID</td>
+                            <td><b>@user.Nome</b></td>
+                            <td>@user.Cargo</td>
+                                <td class="text-center">
+                                    <!-- Botão de Visualizar -->
+                                    <button type="button" class="btn btn-info btn-action" data-bs-toggle="modal"
+                                            onclick="carregarDetalhesUtilizador(@user.ID, '@user.Cargo')" title="Visualizar">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+
+                                    
 
 
+                                    <!-- Botão de Bloqueio (somente para Leitores e Bibliotecários) -->
+                                                        @if (user.Cargo != "Administrador")
+                                                        {
+                                            <!-- Botão de Editar -->
+                                            <a href="@Url.Action("EditarUtilizador", "Administrador", new { id = user.ID, cargo = user.Cargo })"
+                                               class="btn btn-warning btn-action" title="Editar">
+                                                <i class="fas fa-pencil-alt"></i>
+                                            </a>
+                                            <button type="button"
+                                                    class="btn btn-action bloqueio-btn @(user.IsBloqueado ? "btn-danger" : "btn-success")"
+                                                    title="@(user.IsBloqueado ? "Desbloquear" : "Bloquear")"
+                                                    onclick="toggleBloqueio(@user.ID, '@user.Cargo', @(user.IsBloqueado.ToString().ToLower()))">
+                                                <i class="fas fa-ban"></i>
+                                            </button>
+                                                        }
+                                </td>
 
-
-                            <!-- Botão de Editar -->
-                            <a href="@Url.Action("Editar", "Administrador", new { id = user.ID })" class="btn btn-warning btn-action" title="Editar">
-                                <i class="fas fa-pencil-alt"></i>
-                            </a>
-                            <!-- Botão de Excluir -->
-                            <form asp-action="Excluir" asp-controller="Administrador" method="post" style="display:inline;">
-                                <input type="hidden" name="id" value="@user.ID" />
-                                <button type="submit" class="btn btn-danger btn-action" title="Excluir" onclick="return confirm('Tem certeza que deseja excluir este utilizador?')">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </form>
-                        </td>
-                    </tr>
+                        </tr>
                 }
             </tbody>
         </table>
@@ -189,7 +198,6 @@
         }
 
         function carregarDetalhesUtilizador(id, tipo) {
-            console.log(`ID: ${id}, Tipo: ${tipo}`); // Verificar os valores
             $.ajax({
                 url: '/Administrador/DetalhesUtilizador',
                 type: 'GET',
@@ -199,13 +207,67 @@
                     const modal = new bootstrap.Modal(document.getElementById('detalhesModal'));
                     modal.show();
                 },
-                error: function (xhr, status, error) {
-                    console.error(`Erro AJAX: ${error}`); // Log detalhado
+                error: function () {
                     alert('Erro ao carregar os detalhes do utilizador.');
                 }
             });
         }
 
+        function toggleBloqueio(id, cargo, isBloqueado) {
+            const novaAcao = isBloqueado === 'true' ? 'Desbloquear' : 'Bloquear';
+            const confirmacao = confirm(`Tem certeza que deseja ${novaAcao} este utilizador?`);
+
+            if (!confirmacao) {
+                return;
+            }
+
+            $.ajax({
+                url: '/Administrador/ToggleBloqueio',
+                type: 'POST',
+                data: { id: id, cargo: cargo },
+                success: function (res) {
+                    if (res.sucesso) {
+                        // Atualizar o botão visualmente
+                        const btn = $(`button[onclick="toggleBloqueio(${id}, '${cargo}', ${isBloqueado})"]`);
+                        const isBloqueadoNovo = !JSON.parse(isBloqueado); // Alterna o estado de bloqueio
+
+                        btn.toggleClass('btn-success btn-danger');
+                        btn.attr('title', isBloqueadoNovo ? 'Desbloquear' : 'Bloquear');
+                        btn.attr('onclick', `toggleBloqueio(${id}, '${cargo}', ${isBloqueadoNovo})`);
+                    } else {
+                        alert(res.mensagem || "Erro ao atualizar o estado de bloqueio.");
+                    }
+                },
+                error: function () {
+                    alert("Erro ao comunicar com o servidor. Tente novamente.");
+                }
+            });
+        }
+
+        function bloquearUtilizador(id, cargo) {
+            const confirmacao = confirm(`Tem certeza que deseja bloquear este ${cargo.toLowerCase()}?`);
+
+            if (!confirmacao) {
+                return;
+            }
+
+            $.ajax({
+                url: '/Administrador/BloquearUtilizador',
+                type: 'POST',
+                data: { id: id, cargo: cargo },
+                success: function (res) {
+                    if (res.sucesso) {
+                        alert(`${cargo} bloqueado com sucesso.`);
+                        location.reload(); // Atualiza a página para refletir o novo estado
+                    } else {
+                        alert(res.mensagem || "Erro ao bloquear o utilizador.");
+                    }
+                },
+                error: function () {
+                    alert("Erro ao comunicar com o servidor. Tente novamente.");
+                }
+            });
+        }
 
 
     </script>

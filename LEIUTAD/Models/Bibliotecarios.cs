@@ -20,5 +20,7 @@ namespace LEIUTAD.Models
 
         [Required(ErrorMessage = "É obrigatório colocar um contacto.")]
         public string Tele_n { get; set; }
+        public bool IsBloqueado { get; set; } = false; // False por padrão, significa desbloqueado
+
     }
 }

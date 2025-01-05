@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
+using LEIUTAD.ViewModels;
+
 
 namespace LEIUTAD.Controllers
 {
@@ -121,6 +123,37 @@ namespace LEIUTAD.Controllers
             var livros = _context.Livro.Include(l => l.Autor).Include(l => l.Genero).Where(l => carrinho.Contains(l.ISBN)).ToList();
             return View(livros); 
         }
+
+        [HttpGet]
+        public IActionResult Historico()
+        {
+            // Obter o ID do leitor autenticado
+            var leitorId = HttpContext.Session.GetInt32("UserId");
+
+            if (leitorId == null)
+            {
+                TempData["MensagemErro"] = "O utilizador não está autenticado.";
+                return RedirectToAction("Login", "Account");
+            }
+
+            // Obter os dados do histórico de empréstimos e mapear para o ViewModel
+            var historico = _context.Emprestimo
+                .Include(e => e.Emprestimo_Livros)
+                .ThenInclude(el => el.Livro)
+                .Where(e => e.ID_Leitor == leitorId)
+                .Select(e => new HistoricoEmprestimoViewModel
+                {
+                    IDEmprestimo = e.ID_Emp,
+                    DataRequisicao = e.Data_Req,
+                    DataDevolucao = e.Data_Dev,
+                    Estado = e.Estado,
+                    Livros = e.Emprestimo_Livros.Select(el => el.Livro.Titulo).ToList()
+                })
+                .ToList();
+
+            return View(historico);
+        }
+
 
     }
 }

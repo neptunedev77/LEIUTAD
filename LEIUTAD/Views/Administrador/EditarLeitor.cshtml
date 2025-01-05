@@ -1,0 +1,62 @@
+﻿@model LEIUTAD.Models.Leitor
+
+<h2 class="text-center">Editar Leitor</h2>
+
+<form asp-action="EditarLeitor" method="post" style="max-width: 800px; margin: auto;">
+    <input type="hidden" asp-for="ID_user" />
+
+    <div class="mb-3">
+        <label asp-for="Nome" class="form-label">Nome</label>
+        <input asp-for="Nome" class="form-control" />
+        <span asp-validation-for="Nome" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Email" class="form-label">Email</label>
+        <input asp-for="Email" class="form-control" />
+        <span asp-validation-for="Email" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Tele_n" class="form-label">Telefone</label>
+        <input asp-for="Tele_n" class="form-control" />
+        <span asp-validation-for="Tele_n" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Data_n" class="form-label">Data de Nascimento</label>
+        <input asp-for="Data_n" class="form-control" type="date" />
+        <span asp-validation-for="Data_n" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Endereco" class="form-label">Endereço</label>
+        <input asp-for="Endereco" class="form-control" />
+        <span asp-validation-for="Endereco" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Endereco_n" class="form-label">Número</label>
+        <input asp-for="Endereco_n" class="form-control" />
+        <span asp-validation-for="Endereco_n" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Localidade" class="form-label">Localidade</label>
+        <input asp-for="Localidade" class="form-control" />
+        <span asp-validation-for="Localidade" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Pais" class="form-label">País</label>
+        <input asp-for="Pais" class="form-control" />
+        <span asp-validation-for="Pais" class="text-danger"></span>
+    </div>
+
+    <div class="text-center" style="margin-bottom: 50px;">
+        <button type="submit" class="btn btn-primary">Guardar Alterações</button>
+        <a asp-action="GerirUtilizadores" class="btn btn-secondary">Cancelar</a>
+    </div>
+
+
+</form>

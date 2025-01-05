@@ -121,6 +121,12 @@ namespace LEIUTAD.Controllers
                         }
                     }
 
+                    if (user.IsBloqueado)
+                    {
+                        ModelState.AddModelError("", "A sua conta está bloqueada. Contacte o suporte para mais informações.");
+                        return View(model);
+                    }
+
                     if (!user.Estado)
                     {
                         ModelState.AddModelError("", "A conta ainda não foi verificada.");
@@ -148,6 +154,12 @@ namespace LEIUTAD.Controllers
                         }
                     }
 
+                    if (bibliotecario.IsBloqueado)
+                    {
+                        ModelState.AddModelError("", "A sua conta está bloqueada. Contacte o suporte para mais informações.");
+                        return View(model);
+                    }
+
                     HttpContext.Session.SetString("UserName", bibliotecario.Nome);
                     HttpContext.Session.SetInt32("UserId", bibliotecario.ID_Bib);
                     HttpContext.Session.SetString("UserRole", "Bibliotecario");
@@ -159,13 +171,9 @@ namespace LEIUTAD.Controllers
                 var admin = _context.Administrador.SingleOrDefault(a => a.Email == model.Email);
                 if (admin != null)
                 {
-                    // Utilizar o salt armazenado como byte[]
                     using (var hmac = new HMACSHA512(admin.PasswordSalt))
                     {
-                        // Computar o hash da senha fornecida pelo usuário
                         var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(model.Password));
-
-                        // Comparar o hash computado com o hash armazenado no banco
                         if (!computedHash.SequenceEqual(admin.PasswordHash))
                         {
                             ModelState.AddModelError("", "Utilizador ou password inválidos.");
@@ -173,7 +181,6 @@ namespace LEIUTAD.Controllers
                         }
                     }
 
-                    // Configurar a sessão do administrador
                     HttpContext.Session.SetString("UserName", admin.Nome);
                     HttpContext.Session.SetInt32("UserId", admin.ID_Admin);
                     HttpContext.Session.SetString("UserRole", "Administrador");
@@ -184,11 +191,11 @@ namespace LEIUTAD.Controllers
                 // Se não encontrar o utilizador em nenhuma tabela
                 ModelState.AddModelError("", "Utilizador ou password inválidos.");
                 return View(model);
-
             }
 
             return View(model);
         }
+
 
 
         public IActionResult AccessDenied()

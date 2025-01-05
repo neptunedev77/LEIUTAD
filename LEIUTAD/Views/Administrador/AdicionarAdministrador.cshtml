@@ -1,0 +1,32 @@
+﻿@model LEIUTAD.ViewModels.AdministradorViewModel
+
+@{
+    ViewData["Title"] = "Adicionar Administrador";
+}
+
+<h2 class="text-center">Adicionar Administrador</h2>
+
+<form asp-action="AdicionarAdministrador" method="post" style="max-width: 600px; margin: auto;">
+    <div class="form-group">
+        <label asp-for="Nome" class="form-label"></label>
+        <input asp-for="Nome" class="form-control" />
+        <span asp-validation-for="Nome" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Email" class="form-label"></label>
+        <input asp-for="Email" type="email" class="form-control" />
+        <span asp-validation-for="Email" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Password" class="form-label"></label>
+        <input asp-for="Password" type="password" class="form-control" />
+        <span asp-validation-for="Password" class="text-danger"></span>
+    </div>
+
+    <div class="mt-4 text-center">
+        <button type="submit" class="btn btn-primary">Adicionar</button>
+        <a asp-action="GerirUtilizadores" class="btn btn-secondary">Cancelar</a>
+    </div>
+</form>
