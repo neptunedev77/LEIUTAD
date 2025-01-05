@@ -1,44 +1,37 @@
-﻿using System.Net.Mail;
-using System.Net;
+﻿using Microsoft.Extensions.Configuration;
+using MimeKit;
+using MailKit.Net.Smtp;
 
-public class EmailService
+namespace LEIUTAD.Services
 {
-    private readonly IConfiguration _configuration;
-
-    public EmailService(IConfiguration configuration)
+    public class EmailService
     {
-        _configuration = configuration;
-    }
+        private readonly IConfiguration _configuration;
 
-    public void SendEmail(string toEmail, string subject, string body)
-    {
-        var smtpClient = new SmtpClient(_configuration["EmailSettings:SmtpServer"])
+        public EmailService(IConfiguration configuration)
         {
-            Port = int.Parse(_configuration["EmailSettings:SmtpPort"]),
-            Credentials = new NetworkCredential(
-                _configuration["EmailSettings:SenderEmail"],
-                _configuration["EmailSettings:SenderPassword"]
-            ),
-            EnableSsl = true // Certifique-se de que o SSL está ativado
-        };
-
-        var mailMessage = new MailMessage
-        {
-            From = new MailAddress(_configuration["EmailSettings:SenderEmail"]),
-            Subject = subject,
-            Body = body,
-            IsBodyHtml = true // Se quiser enviar emails com HTML
-        };
-
-        mailMessage.To.Add(toEmail);
-
-        try
-        {
-            smtpClient.Send(mailMessage);
+            _configuration = configuration;
         }
-        catch (Exception ex)
+
+        public void SendEmail(string toEmail, string subject, string body)
         {
-            throw new InvalidOperationException("Erro ao enviar o email", ex);
+            var emailSettings = _configuration.GetSection("EmailSettings");
+
+            var message = new MimeMessage();
+            message.From.Add(new MailboxAddress("Biblioteca", emailSettings["SenderEmail"]));
+            message.To.Add(new MailboxAddress("", toEmail));
+            message.Subject = subject;
+
+            var bodyBuilder = new BodyBuilder { HtmlBody = body };
+            message.Body = bodyBuilder.ToMessageBody();
+
+            using (var client = new SmtpClient())
+            {
+                client.Connect(emailSettings["SmtpServer"], int.Parse(emailSettings["SmtpPort"]), false);
+                client.Authenticate(emailSettings["SenderEmail"], emailSettings["SenderPassword"]);
+                client.Send(message);
+                client.Disconnect(true);
+            }
         }
     }
 }

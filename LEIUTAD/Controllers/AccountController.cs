@@ -4,7 +4,8 @@ using LEIUTAD.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Cryptography;
 using System.Text;
-using System.Web;
+using LEIUTAD.Services;
+
 
 namespace LEIUTAD.Controllers
 {
@@ -12,11 +13,14 @@ namespace LEIUTAD.Controllers
     {
         private readonly LEIUTADContext _context;
         private readonly EmailService _emailService;
+
         public AccountController(LEIUTADContext context, EmailService emailService)
         {
             _context = context;
             _emailService = emailService;
         }
+
+
 
         [HttpGet]
         public IActionResult Register()
@@ -54,14 +58,44 @@ namespace LEIUTAD.Controllers
                 _context.Leitor.Add(leitor);
                 _context.SaveChanges();
 
-                EnviarEmailVerificacao(leitor);
-                TempData["MensagemSucesso"] = "Conta criada com sucesso! Por favor, verifique o seu email para ativar a conta.";
-                return RedirectToAction("Login");
-
+                // Redirecionar após o registo
+                return RedirectToAction("Login", "Account");
             }
 
             return View(model);
         }
+
+        public void EnviarEmailVerificacao(Leitor leitor)
+        {
+            var token = Guid.NewGuid().ToString(); // Gera um token único
+            leitor.TokenVerificacao = token;
+            _context.SaveChanges();
+
+            var urlVerificacao = Url.Action("VerificarConta", "Account", new { token }, Request.Scheme);
+            var subject = "Verificação de Conta";
+            var body = $"<p>Clique no link abaixo para verificar a sua conta:</p><p><a href='{urlVerificacao}'>Verificar Conta</a></p>";
+
+            _emailService.SendEmail(leitor.Email, subject, body);
+        }
+
+
+        [HttpGet]
+        public IActionResult VerificarConta(string token)
+        {
+            var leitor = _context.Leitor.FirstOrDefault(l => l.TokenVerificacao == token);
+            if (leitor == null)
+            {
+                return NotFound("Token inválido.");
+            }
+
+            leitor.Estado = true; // Verifica a conta
+            leitor.TokenVerificacao = null; // Remove o token
+            _context.SaveChanges();
+
+            return View("ContaVerificada"); // Mostra uma página de confirmação
+        }
+
+
         [HttpGet]
         public IActionResult Login()
         {
@@ -77,7 +111,6 @@ namespace LEIUTAD.Controllers
                 var user = _context.Leitor.SingleOrDefault(u => u.Email == model.Email);
                 if (user != null)
                 {
-                    // Verificar password
                     using (var hmac = new HMACSHA512(user.PasswordSalt))
                     {
                         var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(model.Password));
@@ -88,14 +121,12 @@ namespace LEIUTAD.Controllers
                         }
                     }
 
-                    // Verificar o estado (email verificado)
                     if (!user.Estado)
                     {
                         ModelState.AddModelError("", "A conta ainda não foi verificada.");
                         return View(model);
                     }
 
-                    // Guardar informações de sessão
                     HttpContext.Session.SetString("UserName", user.Nome);
                     HttpContext.Session.SetInt32("UserId", user.ID_user);
                     HttpContext.Session.SetString("UserRole", "Leitor");
@@ -107,7 +138,6 @@ namespace LEIUTAD.Controllers
                 var bibliotecario = _context.Bibliotecarios.SingleOrDefault(b => b.Email == model.Email);
                 if (bibliotecario != null)
                 {
-                    // Verificar password
                     using (var hmac = new HMACSHA512(bibliotecario.PasswordSalt))
                     {
                         var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(model.Password));
@@ -118,55 +148,46 @@ namespace LEIUTAD.Controllers
                         }
                     }
 
-                    // Guardar informações de sessão
                     HttpContext.Session.SetString("UserName", bibliotecario.Nome);
                     HttpContext.Session.SetInt32("UserId", bibliotecario.ID_Bib);
                     HttpContext.Session.SetString("UserRole", "Bibliotecario");
 
                     return RedirectToAction("Index", "Bibliotecario");
-
                 }
 
-                // Se não encontrar em nenhuma tabela
+                // Verificar na tabela Administradores
+                var admin = _context.Administrador.SingleOrDefault(a => a.Email == model.Email);
+                if (admin != null)
+                {
+                    // Utilizar o salt armazenado como byte[]
+                    using (var hmac = new HMACSHA512(admin.PasswordSalt))
+                    {
+                        // Computar o hash da senha fornecida pelo usuário
+                        var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(model.Password));
+
+                        // Comparar o hash computado com o hash armazenado no banco
+                        if (!computedHash.SequenceEqual(admin.PasswordHash))
+                        {
+                            ModelState.AddModelError("", "Utilizador ou password inválidos.");
+                            return View(model);
+                        }
+                    }
+
+                    // Configurar a sessão do administrador
+                    HttpContext.Session.SetString("UserName", admin.Nome);
+                    HttpContext.Session.SetInt32("UserId", admin.ID_Admin);
+                    HttpContext.Session.SetString("UserRole", "Administrador");
+
+                    return RedirectToAction("Index", "Administrador");
+                }
+
+                // Se não encontrar o utilizador em nenhuma tabela
                 ModelState.AddModelError("", "Utilizador ou password inválidos.");
                 return View(model);
+
             }
 
             return View(model);
-        }
-
-        public void EnviarEmailVerificacao(Leitor leitor)
-        {
-            var token = Guid.NewGuid().ToString(); // Gera um token único
-            leitor.TokenVerificacao = token;
-            _context.SaveChanges();
-
-            var urlVerificacao = Url.Action("VerificarConta", "Account", new { token }, Request.Scheme);
-
-            var subject = "Verificação de Conta";
-            var body = $"<p>Clique no link abaixo para verificar a sua conta:</p><p><a href='{urlVerificacao}'>Verificar Conta</a></p>";
-
-            _emailService.SendEmail(leitor.Email, subject, body); // Usa o serviço injetado
-        }
-
-
-        [HttpGet]
-        public IActionResult VerificarConta(string token)
-        {
-            var user = _context.Leitor.SingleOrDefault(l => l.TokenVerificacao == token);
-
-            if (user == null)
-            {
-                TempData["MensagemErro"] = "Token de verificação inválido ou expirado.";
-                return RedirectToAction("Login");
-            }
-
-            user.Estado = true; // Ativa a conta
-            user.TokenVerificacao = null; // Remove o token após verificação
-            _context.SaveChanges();
-
-            TempData["MensagemSucesso"] = "Conta verificada com sucesso!";
-            return RedirectToAction("Login");
         }
 
 

@@ -89,6 +89,23 @@
                                 </li>
                             }
                         }
+                        else if (HttpContextAccessor.HttpContext.Session.GetString("UserRole") == "Administrador")
+                        {
+                            <!-- Alternar entre "Página Inicial" e "Painel do Administrador" -->
+                            @if (ViewData["Title"] == "Página Inicial")
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-area="" asp-controller="Administrador" asp-action="Index">Painel do Administrador</a>
+                                </li>
+                            }
+                            else
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-area="" asp-controller="Livros" asp-action="Index">Página Inicial</a>
+                                </li>
+                            }
+                        }
+
                     </ul>
                     <div class="d-flex ms-auto">
                         @if (HttpContextAccessor.HttpContext.Session.GetString("UserRole") == "Leitor")
@@ -131,11 +148,12 @@
         @RenderBody()
     </main>
 
-    <footer class="footer text-center @(HttpContextAccessor.HttpContext.Session.GetString("UserRole") == "Bibliotecario" ? "text-white bg-dark" : "text-muted")">
+    <footer class="footer text-center @(HttpContextAccessor.HttpContext.Session.GetString("UserRole") == "Bibliotecario" ? "text-white bg-dark" : HttpContextAccessor.HttpContext.Session.GetString("UserRole") == "Administrador" ? "text-white bg-dark" : "text-muted")">
         <div class="container">
             &copy; 2024 - LEIUTAD &bull; Todos os direitos reservados.
         </div>
     </footer>
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>

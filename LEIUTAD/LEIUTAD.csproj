@@ -7,10 +7,18 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Models\Bibliotecario\EditarLivroViewModel.cs" />
+    <Compile Remove="Models\Bibliotecario\**" />
+    <Content Remove="Models\Bibliotecario\**" />
+    <EmbeddedResource Remove="Models\Bibliotecario\**" />
+    <None Remove="Models\Bibliotecario\**" />
   </ItemGroup>
 
   <ItemGroup>
+    <Content Remove="Views\Index.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MailKit" Version="4.9.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.11" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.11">
       <PrivateAssets>all</PrivateAssets>
@@ -19,10 +27,6 @@
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.7" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="8.0.2" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Models\Bibliotecario\" />
   </ItemGroup>
 
 </Project>

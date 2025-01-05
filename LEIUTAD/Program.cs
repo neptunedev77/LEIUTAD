@@ -4,6 +4,7 @@ using LEIUTAD.Data;
 using LEIUTAD.Filters;
 using LEIUTAD.Services;
 
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Configuração do base de dados
@@ -31,8 +32,9 @@ builder.Services.AddHttpContextAccessor();
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
 
-// Registrar EmailService
-builder.Services.AddSingleton<EmailService>();
+builder.Services.AddScoped<EmailService>();
+
+
 
 var app = builder.Build();
 

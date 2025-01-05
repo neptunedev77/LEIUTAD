@@ -1,0 +1,37 @@
+﻿@model dynamic
+
+<div class="modal-header">
+    <h5 class="modal-title">Detalhes do Utilizador</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+</div>
+<div class="modal-body">
+    @if (Model.Tipo == "Leitor")
+    {
+        <h5>Informações do Leitor</h5>
+        <ul class="list-group">
+            <li class="list-group-item"><strong>ID:</strong> @Model.Detalhes.ID_user</li>
+            <li class="list-group-item"><strong>Nome:</strong> @Model.Detalhes.Nome</li>
+            <li class="list-group-item"><strong>Email:</strong> @Model.Detalhes.Email</li>
+            <li class="list-group-item"><strong>Telefone:</strong> @Model.Detalhes.Tele_n</li>
+            <li class="list-group-item"><strong>Data de Nascimento:</strong> @Model.Detalhes.Data_n.ToString("dd/MM/yyyy")</li>
+            <li class="list-group-item"><strong>Morada:</strong> @Model.Detalhes.Endereco, Nº @Model.Detalhes.Endereco_n</li>
+            <li class="list-group-item"><strong>Localidade:</strong> @Model.Detalhes.Localidade</li>
+            <li class="list-group-item"><strong>País:</strong> @Model.Detalhes.Pais</li>
+            <li class="list-group-item"><strong>Estado:</strong> @(Model.Detalhes.Estado ? "Ativo" : "Inativo")</li>
+            <li class="list-group-item"><strong>Bloqueado:</strong> @(Model.Detalhes.IsBloqueado ? "Sim" : "Não")</li>
+        </ul>
+    }
+    else if (Model.Tipo == "Bibliotecário")
+    {
+        <h5>Informações do Bibliotecário</h5>
+        <ul class="list-group">
+            <li class="list-group-item"><strong>ID:</strong> @Model.Detalhes.ID_Bib</li>
+            <li class="list-group-item"><strong>Nome:</strong> @Model.Detalhes.Nome</li>
+            <li class="list-group-item"><strong>Email:</strong> @Model.Detalhes.Email</li>
+            <li class="list-group-item"><strong>Telefone:</strong> @Model.Detalhes.Tele_n</li>
+        </ul>
+    }
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+</div>
