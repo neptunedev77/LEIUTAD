@@ -145,11 +145,13 @@
                                     <!-- Botão de Bloqueio (somente para Leitores e Bibliotecários) -->
                                                         @if (user.Cargo != "Administrador")
                                                         {
-                                            <!-- Botão de Editar -->
-                                            <a href="@Url.Action("EditarUtilizador", "Administrador", new { id = user.ID, cargo = user.Cargo })"
+                                                        <!-- Botão de Editar -->
+                                            <a href="@Url.Action("EditarUtilizador", "Administrador", new { id = user.ID, tipo = user.Cargo })"
                                                class="btn btn-warning btn-action" title="Editar">
                                                 <i class="fas fa-pencil-alt"></i>
                                             </a>
+
+
                                             <button type="button"
                                                     class="btn btn-action bloqueio-btn @(user.IsBloqueado ? "btn-danger" : "btn-success")"
                                                     title="@(user.IsBloqueado ? "Desbloquear" : "Bloquear")"
