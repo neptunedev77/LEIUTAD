@@ -25,6 +25,15 @@ namespace LEIUTAD.Controllers
         [HttpGet]
         public IActionResult Register()
         {
+            // Lista de países
+         ViewBag.Paises = new List<string> {
+        "Portugal", "Brasil", "Espanha", "França", "Alemanha",
+        "Reino Unido", "Itália", "Estados Unidos", "Canadá", "Austrália",
+        "Japão", "China", "Rússia", "Índia", "Argentina", "México",
+        "Chile", "Uruguai", "África do Sul", "Angola", "Moçambique"
+        //
+    };
+
             return View();
         }
 
@@ -61,6 +70,15 @@ namespace LEIUTAD.Controllers
                 // Redirecionar após o registo
                 return RedirectToAction("Login", "Account");
             }
+
+            // Caso a validação falhe, recarregar a lista de países para a View
+            ViewBag.Paises = new List<string>
+            {
+                "Portugal", "Brasil", "Espanha", "França", "Alemanha",
+                "Reino Unido", "Itália", "Estados Unidos", "Canadá", "Austrália",
+                "Japão", "China", "Rússia", "Índia", "Argentina", "México",
+                "Chile", "Uruguai", "África do Sul", "Angola", "Moçambique"
+            };
 
             return View(model);
         }

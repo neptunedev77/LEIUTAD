@@ -94,9 +94,16 @@
             <!-- País -->
             <div class="mb-3">
                 <label asp-for="Pais" class="form-label">País</label>
-                <input asp-for="Pais" class="form-control" placeholder="Digite o seu país" />
+                <select asp-for="Pais" class="form-select">
+                    <option value="">Selecione um país</option>
+                    @foreach (var pais in ViewBag.Paises as List<string>)
+                    {
+                        <option value="@pais">@pais</option>
+                    }
+                </select>
                 <span asp-validation-for="Pais" class="text-danger"></span>
             </div>
+
 
             <!-- Botão de Submeter -->
             <div class="text-center mt-4">
